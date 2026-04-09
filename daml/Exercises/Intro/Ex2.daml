@@ -1,0 +1,34 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Intro 2 — Assertions
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `let x = expr` binds a value inside a `script do` block.
+-- `assertMsg "message" condition` fails the script with a human-readable
+-- message if `condition` is False. Use it to state what you expect to be true.
+-- In DAML, basic arithmetic on `Int` works exactly as you'd expect:
+--   (+), (-), (*), (/)    — note: `/` on Int is integer (truncating) division
+-- The equality operator is `==` and inequality is `/=`.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/Prelude.html#function-da-internal-prelude-assertmsg
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- What does `1 + 1` evaluate to? Fix the number on the right-hand side of `==`.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Intro.Ex2 where
+
+import Daml.Script
+
+intro2 : Script ()
+intro2 = script do
+  let x : Int = 1 + 1
+
+  -- TODO: Fix the expected value — `x` is not 3.
+  assertMsg "x should equal 2" (x == 3)
+
+  -- This one is already correct. Study how assertMsg works.
+  let y : Int = 10 - 3
+  assertMsg "y should equal 7" (y == 7)

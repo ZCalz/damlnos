@@ -1,0 +1,32 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Intro 1 — Hello, DAML!
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- A `Script` is DAML's built-in way to simulate ledger operations in tests.
+-- `script do` begins a script block — it is the DAML equivalent of `main`.
+-- `debug` prints any value that has a `Show` instance to the test output.
+-- `assert` fails the script (and the test) if its argument is `False`.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/0_Intro.html
+-- https://docs.daml.com/daml-script/index.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Change `False` to `True` on the last line.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Intro.Ex1 where
+
+import Daml.Script
+
+intro1 : Script ()
+intro1 = script do
+  debug "Welcome to Damlers!"
+  debug "You are learning DAML — a language for writing smart contracts."
+  debug "Each exercise has one or more Script tests. Fix the code to make them pass."
+  debug "The damlers watcher re-runs the tests every time you save this file."
+
+  -- TODO: Change False to True to mark this exercise as complete.
+  assert False

@@ -1,0 +1,8 @@
+sdk-version: 3.4.9
+name: damlers
+version: 0.0.1
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script
+source: daml

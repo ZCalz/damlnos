@@ -1,0 +1,45 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Types 2 — Int vs Decimal
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Int and Decimal are distinct types in DAML. You cannot mix them in one
+-- arithmetic expression without an explicit conversion.
+--
+--   Int division is truncating:  7 / 2  =  3   (not 3.5)
+--   Decimal division is exact:   7.0 / 2.0  =  3.5
+--
+-- Conversion:
+--   intToDecimal : Int -> Decimal   — promote an Int to Decimal
+--   (round, floor, ceiling, truncate convert the other way)
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/Prelude.html#function-ghc-real-inttodecimal
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- 1. Change `decResult` so it actually computes 7.0 / 2.0.
+-- 2. Change `converted` to use `intToDecimal` on `intResult`.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Types.Ex2 where
+
+import Daml.Script
+
+types2 : Script ()
+types2 = script do
+  let a : Int = 7
+  let b : Int = 2
+
+  -- Integer division truncates — this assertion is already correct.
+  let intResult : Int = a / b
+  assertMsg "Int division: 7 / 2 = 3" (intResult == 3)
+
+  -- TODO: Compute the true decimal result of dividing 7 by 2.
+  -- Replace the right-hand side with a Decimal division expression.
+  let decResult : Decimal = 0.0   -- TODO: fix me
+  assertMsg "Decimal division: 7.0 / 2.0 = 3.5" (decResult == 3.5)
+
+  -- TODO: Convert `intResult` (an Int) to a Decimal using `intToDecimal`.
+  let converted : Decimal = 0.0  -- TODO: fix me
+  assertMsg "Converted intResult should be 3.0" (converted == 3.0)

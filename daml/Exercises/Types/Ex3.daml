@@ -1,0 +1,51 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Types 3 — Text Operations
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Text is DAML's string type. Key operations:
+--
+--   (<>)        : Text -> Text -> Text   — concatenation (not `+`)
+--   show        : Show a => a -> Text    — convert any showable value to Text
+--   T.length    : Text -> Int            — number of characters
+--   T.toLower   : Text -> Text           — lowercase
+--   T.toUpper   : Text -> Text           — uppercase
+--   T.isPrefixOf : Text -> Text -> Bool  — prefix check
+--
+-- Import DA.Text qualified as T to access the Text module functions.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/DA-Text.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- 1. Replace `+` with `<>` for Text concatenation.
+-- 2. Fix the expected length (count the characters in "Hello, World!").
+-- 3. Use `show 42` to convert the Int 42 into Text.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Types.Ex3 where
+
+import DA.Text qualified as T
+import Daml.Script
+
+types3 : Script ()
+types3 = script do
+  let hello = "Hello"
+  let world = "World"
+
+  -- TODO: Fix the operator — Text is concatenated with <>, not +
+  let greeting : Text = hello + ", " + world + "!"
+  assertMsg "greeting should be 'Hello, World!'" (greeting == "Hello, World!")
+
+  -- TODO: Fix the expected length — count the characters in "Hello, World!"
+  let len : Int = T.length greeting
+  assertMsg "length of 'Hello, World!' should be 13" (len == 99)
+
+  -- TODO: Use `show` to convert the Int 42 to the Text "42"
+  let numText : Text = 42   -- ERROR: 42 is not Text
+  assertMsg "show 42 should produce \"42\"" (numText == "42")
+
+  -- This one is already correct — study it.
+  let shout = T.toUpper greeting
+  assertMsg "toUpper should capitalise" (T.isPrefixOf "HELLO" shout)

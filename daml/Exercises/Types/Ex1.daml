@@ -1,0 +1,45 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Types 1 — Primitive Literals
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- DAML has four core primitive types you will use constantly:
+--
+--   Text     — Unicode text strings, written with double quotes: "hello"
+--   Int      — 64-bit signed integer: 42, -7, 0
+--   Decimal  — Fixed-point decimal (38 digits, 10 decimal places): 3.14, 100.0
+--   Bool     — Boolean: True or False
+--
+-- Type annotations are written after a colon:  name : Type = value
+-- DAML is strongly typed — assigning a value of the wrong type is a
+-- compile error that the `damlers` watcher will show you immediately.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/1_Token.html
+-- https://docs.daml.com/daml/stdlib/Prelude.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Each binding below has a type error: the value does not match the annotation.
+-- Fix all four so the file compiles and the assertions pass.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Types.Ex1 where
+
+import Daml.Script
+
+types1 : Script ()
+types1 = script do
+  -- TODO: Fix each value to match its type annotation.
+  -- The current values are intentionally the wrong type — they won't compile.
+
+  let myText    : Text    = 0        -- ERROR: 0 is an Int, not Text
+  let myInt     : Int     = "hello"  -- ERROR: "hello" is Text, not Int
+  let myDecimal : Decimal = True     -- ERROR: True is Bool, not Decimal
+  let myBool    : Bool    = 3.14     -- ERROR: 3.14 is Decimal, not Bool
+
+  -- Once the types are fixed, make sure the assertions below pass:
+  assertMsg "myText should not be empty"        (myText /= "")
+  assertMsg "myInt should be positive"          (myInt > 0)
+  assertMsg "myDecimal should be greater than 1" (myDecimal > 1.0)
+  debug myBool  -- just print it — any Bool value is fine

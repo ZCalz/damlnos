@@ -1,0 +1,18 @@
+# DAML build artifacts
+.daml/
+
+# Rust build artifacts
+target/
+
+# Damlers runtime state
+.damlers/state.json
+
+# Editor artifacts
+.idea/
+.vscode/
+*.swp
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db

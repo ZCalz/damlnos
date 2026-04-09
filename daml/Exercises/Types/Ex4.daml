@@ -1,0 +1,47 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Types 4 — Party
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `Party` is a built-in DAML type representing a named entity on the ledger —
+-- a person, organisation, or system. Parties:
+--
+--   • Must authorise the creation and archival of contracts they sign.
+--   • Are compared with (==) and (/=).
+--   • Are created in Scripts with `allocateParty "DisplayName"`.
+--   • Two calls to `allocateParty` always produce distinct parties, even with
+--     the same display name.
+--
+-- The `<-` (bind) syntax is used because `allocateParty` is a Script action,
+-- not a pure value. Inside `script do`, use `<-` for actions and `let` for
+-- pure values.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#the-party-type
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- 1. Replace `let bob = alice` with a proper `allocateParty` call using `<-`.
+-- 2. Uncomment the Charlie block and fill in the missing allocateParty call.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Types.Ex4 where
+
+import Daml.Script
+
+types4 : Script ()
+types4 = script do
+  alice <- allocateParty "Alice"
+
+  -- TODO: Allocate a party named "Bob". Use <- not let.
+  let bob = alice   -- TODO: replace this line with: bob <- allocateParty "Bob"
+
+  assertMsg "alice and bob must be different parties" (alice /= bob)
+
+  -- TODO: Uncomment the lines below and fill in the missing expression.
+  -- charlie <- ???
+  -- assertMsg "charlie is not alice" (charlie /= alice)
+  -- assertMsg "charlie is not bob"   (charlie /= bob)
+
+  debug alice
+  debug bob
