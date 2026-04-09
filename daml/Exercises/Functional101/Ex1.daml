@@ -1,0 +1,49 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functional101 1 — Function Composition
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- The `(.)` operator composes two functions, applying right-to-left:
+--
+--   (f . g) x  =  f (g x)    -- g runs first, f runs second
+--
+-- So `(f . g . h) x = f (g (h x))` — read right-to-left.
+--
+-- This lets you build pipelines without naming intermediate results:
+--
+--   process = map show . filter even . map (*2)
+--   -- equivalent to: \xs -> map show (filter even (map (*2) xs))
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/2_DamlScript.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- `addOneThenDouble`: should add 1 first, then multiply by 2.
+--   With (.), the rightmost function runs first — swap the two around `.`.
+-- `pipeline`: the middle step squares instead of doubling — fix it to `(*2)`.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functional101.Ex1 where
+
+import Daml.Script
+
+-- TODO: Should add 1 first, then double the result.
+-- Currently doubles first, then adds 1. Swap the functions around `.`.
+addOneThenDouble : Int -> Int
+addOneThenDouble = (+1) . (*2)   -- TODO: wrong order
+
+-- TODO: Should filter evens, then double each, then convert to Text.
+-- Currently the middle step squares (^2) instead of doubling — fix it.
+pipeline : [Int] -> [Text]
+pipeline = map show . map (^2) . filter even
+
+functional101_1 : Script ()
+functional101_1 = script do
+  -- addOneThenDouble x = (x + 1) * 2
+  assertMsg "addOneThenDouble 3 = 8"  (addOneThenDouble 3  == 8)   -- (3+1)*2=8
+  assertMsg "addOneThenDouble 0 = 2"  (addOneThenDouble 0  == 2)   -- (0+1)*2=2
+  assertMsg "addOneThenDouble 9 = 20" (addOneThenDouble 9  == 20)  -- (9+1)*2=20
+
+  -- pipeline: [1,2,3,4,5,6] → keep [2,4,6] → double [4,8,12] → show ["4","8","12"]
+  assertMsg "pipeline [1..6]" (pipeline [1, 2, 3, 4, 5, 6] == ["4", "8", "12"])

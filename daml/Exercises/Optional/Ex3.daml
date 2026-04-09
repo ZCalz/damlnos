@@ -1,0 +1,59 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Optional 3 — mapOptional and catOptionals
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Two powerful functions for working with lists of Optionals:
+--
+--   mapOptional : (a -> Optional b) -> [a] -> [b]
+--     Apply a function that may fail to each element, collect only successes.
+--     Equivalent to: catOptionals . map f
+--
+--   catOptionals : [Optional a] -> [a]
+--     Remove all Nones from a list and unwrap the Somes.
+--
+-- Example:
+--   mapOptional (\x -> if x > 0 then Some x else None) [-1, 2, -3, 4]
+--   -- [2, 4]
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/DA-Optional.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Fix the predicate in `mapOptional` (wrong comparison direction).
+-- Fix `catOptionals` expected result (Nones should be gone).
+-- Complete `safeReciprocal` — return None for zero, Some (1/x) otherwise.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Optional.Ex3 where
+
+import DA.Optional
+import Daml.Script
+
+-- TODO: Should keep only positives. Fix the predicate (< vs >).
+keepPositives : [Int] -> [Int]
+keepPositives = mapOptional (\x -> if x < 0 then Some x else None)
+
+-- TODO: Return None when x is 0.0, Some (1.0 / x) otherwise.
+safeReciprocal : Decimal -> Optional Decimal
+safeReciprocal x = Some (1.0 / x)   -- TODO: handle zero
+
+optional3 : Script ()
+optional3 = script do
+  -- catOptionals strips out Nones
+  let mixed = [Some 1, None, Some 2, None, Some 3] : [Optional Int]
+  -- TODO: Fix the expected result — None values should be removed.
+  assertMsg "catOptionals" (catOptionals mixed == [1, None, 2, None, 3])
+
+  -- keepPositives
+  assertMsg "keepPositives [-1,2,-3,4]" (keepPositives [-1, 2, -3, 4] == [2, 4])
+  assertMsg "keepPositives all neg"     (keepPositives [-1, -2]        == [])
+
+  -- safeReciprocal
+  assertMsg "reciprocal 2.0 = Some 0.5" (safeReciprocal 2.0 == Some 0.5)
+  assertMsg "reciprocal 0.0 = None"     (safeReciprocal 0.0 == None)
+
+  -- mapOptional with safeReciprocal
+  let recips = mapOptional safeReciprocal [0.0, 2.0, 0.0, 4.0]
+  assertMsg "recips" (recips == [0.5, 0.25])

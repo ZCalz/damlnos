@@ -1,0 +1,59 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Optional 1 — Some, None, and fromOptional
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `Optional a` represents a value that may or may not be present.
+-- It has two constructors:
+--   Some x  — a value is present
+--   None    — no value
+--
+-- Key functions:
+--   fromOptional : a -> Optional a -> a    (default if None)
+--   isSome       : Optional a -> Bool
+--   isNone       : Optional a -> Bool
+--   fromSome     : Optional a -> a         (crashes on None — avoid!)
+--
+-- `Optional` is DAML's safe replacement for null / undefined.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/DA-Optional.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- `safeDivide`: return None when dividing by zero, Some result otherwise.
+-- `fromOptional`: first arg is the default — fix the argument order.
+-- Fix the isSome/isNone assertions (wrong expected Bool values).
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Optional.Ex1 where
+
+import DA.Optional
+import Daml.Script
+
+-- TODO: Return None when b is 0, Some (x / y) otherwise.
+-- Currently always returns Some — fix the zero check.
+safeDivide : Decimal -> Decimal -> Optional Decimal
+safeDivide x b = Some (x / b)   -- TODO: add a zero-check
+
+optional1 : Script ()
+optional1 = script do
+  assertMsg "10 / 2 = Some 5.0" (safeDivide 10.0 2.0 == Some 5.0)
+  assertMsg "10 / 0 = None"     (safeDivide 10.0 0.0 == None)
+
+  let present = Some 42 : Optional Int
+  let absent  = None    : Optional Int
+
+  -- TODO: Fix the expected Bool values — isSome/isNone are swapped.
+  assertMsg "isSome present" (isSome present == False)   -- TODO: wrong
+  assertMsg "isNone present" (isNone present == True)    -- TODO: wrong
+  assertMsg "isSome absent"  (isSome absent  == True)    -- TODO: wrong
+  assertMsg "isNone absent"  (isNone absent  == False)   -- TODO: wrong
+
+  -- fromOptional default opt  → returns opt's value, or default if None
+  -- TODO: Fix the call — the default (0) and the Optional are in the wrong order.
+  let v1 = fromOptional present 0
+  assertMsg "fromOptional present = 42" (v1 == 42)
+
+  let v2 = fromOptional absent 0
+  assertMsg "fromOptional absent = 0"   (v2 == 0)

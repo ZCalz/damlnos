@@ -1,0 +1,75 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Variants 3 — Modelling Domain States
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Variants shine at modelling the states of a domain object over its lifetime.
+-- Each constructor can carry exactly the data relevant to that state.
+--
+--   data OrderStatus
+--     = Pending
+--     | Processing Text        -- processor ID
+--     | Shipped    Text Text   -- carrier, tracking number
+--     | Delivered
+--     | Cancelled  Text        -- cancellation reason
+--
+-- Pattern matching then naturally forces you to handle each state.
+-- This is safer than using a String field with magic values.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#variants
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- `canShip` should return True only for Processing orders — fix the branches.
+-- `statusLabel` has the Pending and Delivered labels swapped.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Variants.Ex3 where
+
+import Daml.Script
+
+data OrderStatus
+  = Pending
+  | Processing Text
+  | Shipped    Text Text
+  | Delivered
+  | Cancelled  Text
+    deriving (Eq, Show)
+
+-- TODO: Only `Processing` orders can be shipped. Fix the other branches.
+canShip : OrderStatus -> Bool
+canShip status = case status of
+  Pending         -> True    -- TODO: should be False
+  Processing _    -> False   -- TODO: should be True
+  Shipped _ _     -> True    -- TODO: should be False
+  Delivered       -> True    -- TODO: should be False
+  Cancelled _     -> True    -- TODO: should be False
+
+-- TODO: Pending and Delivered labels are swapped — fix them.
+statusLabel : OrderStatus -> Text
+statusLabel status = case status of
+  Pending         -> "Delivered"             -- TODO: wrong
+  Processing proc -> "Processing by " <> proc
+  Shipped c t     -> "Shipped via " <> c <> " (" <> t <> ")"
+  Delivered       -> "Pending"              -- TODO: wrong
+  Cancelled r     -> "Cancelled: " <> r
+
+variants3 : Script ()
+variants3 = script do
+  let p = Pending
+  let proc = Processing "warehouse-1"
+  let ship = Shipped "FedEx" "TRK123"
+  let del  = Delivered
+  let can  = Cancelled "Customer request"
+
+  assertMsg "Pending can't ship"     (canShip p    == False)
+  assertMsg "Processing can ship"    (canShip proc == True)
+  assertMsg "Shipped can't ship"     (canShip ship == False)
+  assertMsg "Delivered can't ship"   (canShip del  == False)
+  assertMsg "Cancelled can't ship"   (canShip can  == False)
+
+  assertMsg "label Pending"          (statusLabel p    == "Pending")
+  assertMsg "label Processing"       (statusLabel proc == "Processing by warehouse-1")
+  assertMsg "label Delivered"        (statusLabel del  == "Delivered")
+  assertMsg "label Cancelled"        (statusLabel can  == "Cancelled: Customer request")

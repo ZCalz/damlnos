@@ -1,0 +1,48 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Lists 3 — filter
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `filter` keeps only elements for which a predicate returns True:
+--
+--   filter : (a -> Bool) -> [a] -> [a]
+--
+--   filter even [1..6]          -- [2, 4, 6]
+--   filter (> 3) [1, 2, 3, 4, 5] -- [4, 5]
+--   filter (/= 0) [1, 0, 2, 0]  -- [1, 2]
+--
+-- `filter` may shrink the list (or return the same list, or []).
+-- Combine with `map` for powerful pipelines: map f (filter p xs)
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/Prelude.html#function-ghc-list-filter
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Each predicate is the opposite of what is needed — negate or flip each one.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Lists.Ex3 where
+
+import Daml.Script
+
+lists3 : Script ()
+lists3 = script do
+  let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : [Int]
+
+  -- TODO: Should keep even numbers. Fix the predicate (odd vs even).
+  let evens = filter odd nums
+  assertMsg "evens" (evens == [2, 4, 6, 8, 10])
+
+  -- TODO: Should keep numbers greater than 5. Fix the comparison direction.
+  let big = filter (<= 5) nums
+  assertMsg "big" (big == [6, 7, 8, 9, 10])
+
+  -- TODO: Should remove zeros. Fix the predicate (== vs /=).
+  let noZeros = filter (== 0) [1, 0, 2, 0, 3]
+  assertMsg "noZeros" (noZeros == [1, 2, 3])
+
+  -- TODO: Filter then map — keep positives and double them.
+  -- Fix the filter predicate (currently keeps negatives).
+  let result = map (*2) (filter (< 0) [-2, -1, 0, 1, 2])
+  assertMsg "positive doubles" (result == [2, 4])

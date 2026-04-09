@@ -1,0 +1,64 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Variants 4 — Variants with Record Payloads
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Constructors can carry full records as their payload using `with`:
+--
+--   data Payment
+--     = BankTransfer with iban : Text; amount : Decimal
+--     | CardPayment  with last4 : Text; amount : Decimal
+--     | Cash         with amount : Decimal
+--
+-- Pattern matching binds the record fields positionally or you can access
+-- them via the bound variable and dot syntax after matching.
+--
+-- You can also nest variants inside records:
+--   data Invoice = Invoice with total : Decimal; payment : Payment
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#variants
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- `paymentAmount` accesses the wrong field on each constructor.
+-- `describe` has the BankTransfer and CardPayment descriptions swapped.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Variants.Ex4 where
+
+import Daml.Script
+
+data Payment
+  = BankTransfer with iban : Text; amount : Decimal
+  | CardPayment  with last4 : Text; amount : Decimal
+  | Cash         with amount : Decimal
+    deriving (Eq, Show)
+
+-- TODO: Each branch extracts the wrong field. Fix them to return `amount`.
+paymentAmount : Payment -> Decimal
+paymentAmount p = case p of
+  BankTransfer bt -> bt.iban      -- TODO: should be bt.amount (and bt.iban is Text)
+  CardPayment  cp -> cp.last4     -- TODO: should be cp.amount
+  Cash         c  -> c.amount     -- this one is correct
+
+-- TODO: BankTransfer and CardPayment descriptions are swapped.
+describe : Payment -> Text
+describe p = case p of
+  BankTransfer bt -> "Card ending " <> bt.iban          -- TODO: swapped
+  CardPayment  cp -> "Bank transfer to " <> cp.last4    -- TODO: swapped
+  Cash         _  -> "Cash payment"
+
+variants4 : Script ()
+variants4 = script do
+  let bt = BankTransfer with iban = "GB33BUKB20201555555555"; amount = 500.0
+  let cp = CardPayment  with last4 = "4242"; amount = 99.99
+  let ca = Cash         with amount = 20.0
+
+  assertMsg "bt amount = 500"  (paymentAmount bt == 500.0)
+  assertMsg "cp amount = 99.99" (paymentAmount cp == 99.99)
+  assertMsg "cash amount = 20" (paymentAmount ca == 20.0)
+
+  assertMsg "bt describe" (describe bt == "Bank transfer to GB33BUKB20201555555555")
+  assertMsg "cp describe" (describe cp == "Card ending 4242")
+  assertMsg "ca describe" (describe ca == "Cash payment")

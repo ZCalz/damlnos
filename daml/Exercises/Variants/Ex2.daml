@@ -1,0 +1,62 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Variants 2 — Constructors with Payload
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Constructors can carry data (a "payload"):
+--
+--   data Shape
+--     = Circle    Decimal          -- one Decimal field (radius)
+--     | Rectangle Decimal Decimal  -- two Decimal fields (width, height)
+--     | Triangle  Decimal Decimal  -- two Decimal fields (base, height)
+--
+-- When matching, the payload fields are bound positionally:
+--   case s of
+--     Circle r      -> ...
+--     Rectangle w h -> ...
+--     Triangle b h  -> ...
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#variants
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Each area formula is wrong:
+--   Circle: should be pi * r * r  (not r + r)
+--   Rectangle: should be w * h    (not w + h)
+--   Triangle: should be 0.5 * b * h (not b * h)
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Variants.Ex2 where
+
+import Daml.Script
+
+data Shape
+  = Circle    Decimal
+  | Rectangle Decimal Decimal
+  | Triangle  Decimal Decimal
+    deriving (Eq, Show)
+
+-- TODO: Fix all three area formulas.
+area : Shape -> Decimal
+area s = case s of
+  Circle r      -> r + r            -- TODO: should be pi * r * r  (use 3.14159)
+  Rectangle w h -> w + h            -- TODO: should be w * h
+  Triangle b h  -> b * h            -- TODO: should be 0.5 * b * h
+
+-- perimeter is already correct — study it.
+perimeter : Shape -> Optional Decimal
+perimeter s = case s of
+  Circle r      -> Some (2.0 * 3.14159 * r)
+  Rectangle w h -> Some (2.0 * (w + h))
+  Triangle _ _  -> None   -- can't compute without the hypotenuse
+
+variants2 : Script ()
+variants2 = script do
+  assertMsg "circle area r=1"       (area (Circle 1.0)         == 3.14159)
+  assertMsg "rectangle area 3x4"    (area (Rectangle 3.0 4.0)  == 12.0)
+  assertMsg "triangle area b=6 h=4" (area (Triangle 6.0 4.0)   == 12.0)
+
+  assertMsg "circle perimeter"    (perimeter (Circle 1.0)        == Some 6.28318)
+  assertMsg "rectangle perimeter" (perimeter (Rectangle 3.0 4.0) == Some 14.0)
+  assertMsg "triangle perimeter"  (perimeter (Triangle 3.0 4.0)  == None)

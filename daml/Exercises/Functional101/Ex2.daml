@@ -1,0 +1,55 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functional101 2 — The $ Operator
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `($)` is function application with the lowest possible precedence:
+--
+--   ($) : (a -> b) -> a -> b
+--   f $ x  =  f x
+--
+-- Its purpose is to eliminate parentheses by letting everything to its right
+-- be evaluated first:
+--
+--   show (map (*2) (filter even [1..6]))
+--   -- is the same as:
+--   show $ map (*2) $ filter even [1..6]
+--
+-- `$` is right-associative: `f $ g $ x = f (g x) = (f . g) x`
+-- Combining `$` and `.`:
+--   (f . g) $ xs   — compose f and g, then apply to xs
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/2_DamlScript.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Each expression uses extra parentheses that can be replaced with `$`.
+-- Re-write each right-hand side using `$` so the assertions still pass.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functional101.Ex2 where
+
+import Daml.Script
+
+functional101_2 : Script ()
+functional101_2 = script do
+  -- TODO: Rewrite each right-hand side to use $ instead of the outermost parens.
+  -- The test values are already correct — only the style needs fixing.
+
+  -- Example already done for you:
+  --   show (42 : Int)   →   show $ (42 : Int)
+  let ex0 : Text = show (42 : Int)
+  assertMsg "show 42" (ex0 == "42")
+
+  -- TODO: Replace outer parens with $
+  let ex1 : [Int] = map (*2) ([1, 2, 3] : [Int])
+  assertMsg "map (*2)" (ex1 == [2, 4, 6])
+
+  -- TODO: Replace outer parens with $
+  let ex2 : [Int] = filter even (map (*3) ([1, 2, 3, 4] : [Int]))
+  assertMsg "filter even $ map (*3)" (ex2 == [6, 12])
+
+  -- TODO: Replace outer parens with $ (two levels of parens to remove)
+  let ex3 : Text = show (length (filter odd ([1, 2, 3, 4, 5] : [Int])))
+  assertMsg "show $ length $ filter odd" (ex3 == "3")

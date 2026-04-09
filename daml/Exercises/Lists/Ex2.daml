@@ -1,0 +1,48 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Lists 2 — map
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `map` applies a function to every element of a list, producing a new list:
+--
+--   map : (a -> b) -> [a] -> [b]
+--
+--   map (*2) [1, 2, 3]          -- [2, 4, 6]
+--   map show [1, 2, 3]          -- ["1", "2", "3"]
+--   map (\x -> x > 2) [1,2,3]  -- [False, False, True]
+--
+-- `map` never changes the length of a list. It is the go-to tool for
+-- element-wise transformations.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/Prelude.html#function-ghc-base-map
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Each `map` call passes the wrong function — fix the lambda or function ref.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Lists.Ex2 where
+
+import Daml.Script
+
+lists2 : Script ()
+lists2 = script do
+  let nums = [1, 2, 3, 4, 5] : [Int]
+
+  -- TODO: Should double each element (*2), not add 2.
+  let doubled = map (\x -> x + 2) nums
+  assertMsg "doubled" (doubled == [2, 4, 6, 8, 10])
+
+  -- TODO: Should square each element (x*x), not negate it.
+  let squared = map (\x -> -x) nums
+  assertMsg "squared" (squared == [1, 4, 9, 16, 25])
+
+  -- TODO: Should convert each Int to Text using `show`, not negate it.
+  let asText = map (\x -> show (-x)) nums
+  assertMsg "asText" (asText == ["1", "2", "3", "4", "5"])
+
+  -- TODO: Should produce True for elements > 3, False otherwise.
+  -- Fix the comparison operator (currently uses <).
+  let gtThree = map (\x -> x < 3) nums
+  assertMsg "gtThree" (gtThree == [False, False, False, True, True])

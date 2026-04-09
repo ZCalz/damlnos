@@ -1,0 +1,51 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Lists 5 — DA.List Utilities
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- The `DA.List` module provides useful functions beyond map/filter/foldl:
+--
+--   sortBy   : (a -> a -> Ordering) -> [a] -> [a]
+--   sort     : Ord a => [a] -> [a]
+--   nub      : Eq a => [a] -> [a]      (remove duplicates, first wins)
+--   zip      : [a] -> [b] -> [(a, b)]  (pair up elements)
+--   unzip    : [(a, b)] -> ([a], [b])  (split pairs)
+--   intercalate : [a] -> [[a]] -> [a]  (join with separator)
+--   isPrefixOf, isSuffixOf, isInfixOf  (sublist checks)
+--
+-- Import: `import DA.List`
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/DA-List.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- 1. `nub` removes duplicates — the expected result is missing some elements.
+-- 2. `zip` pairs elements by position — the pairs are in the wrong order.
+-- 3. `intercalate` joins with a separator — fix the separator and list.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Lists.Ex5 where
+
+import DA.List
+import Daml.Script
+
+lists5 : Script ()
+lists5 = script do
+  -- TODO: nub removes duplicates keeping the first occurrence.
+  -- Fix the expected result — it should have no duplicates.
+  let deduped = nub [1, 2, 1, 3, 2, 4] : [Int]
+  assertMsg "nub removes duplicates" (deduped == [1, 2, 1, 3, 4])
+
+  -- TODO: sort puts elements in ascending order. Fix the expected result.
+  let sorted = sort [3, 1, 4, 1, 5, 9, 2, 6] : [Int]
+  assertMsg "sort ascending" (sorted == [9, 5, 4, 3, 2, 1, 1, 6])
+
+  -- TODO: zip pairs elements by position. Fix the expected pairs.
+  let zipped = zip [1, 2, 3] ["a", "b", "c"]
+  assertMsg "zip" (zipped == [(1, "c"), (2, "b"), (3, "a")])
+
+  -- TODO: intercalate joins a list of lists with a separator.
+  -- Fix the separator: should use ", " not "-".
+  let joined = intercalate "-" ["hello", "world", "daml"]
+  assertMsg "intercalate" (joined == "hello, world, daml")

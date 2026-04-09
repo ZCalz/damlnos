@@ -1,0 +1,54 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Lists 1 — Constructing Lists
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- A list in DAML is a homogeneous sequence. All elements must have the same type.
+--
+--   []             — the empty list
+--   [1, 2, 3]      — list literal
+--   x :: xs        — cons: prepend x to list xs
+--   [1] <> [2, 3]  — concatenation: [1, 2, 3]
+--
+-- Useful functions from the Prelude:
+--   length : [a] -> Int
+--   null   : [a] -> Bool      (True if empty)
+--   head   : [a] -> a         (first element; crashes on [])
+--   tail   : [a] -> [a]       (all but first; crashes on [])
+--   last   : [a] -> a         (last element)
+--   reverse : [a] -> [a]
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/Prelude.html#list-functions
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Fix the cons expression (wrong order), the concatenation (wrong operator),
+-- and the length/null assertions (wrong expected values).
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Lists.Ex1 where
+
+import Daml.Script
+
+lists1 : Script ()
+lists1 = script do
+  let xs = [1, 2, 3] : [Int]
+
+  -- TODO: cons prepends to the LEFT. Fix the order.
+  let consed = xs :: 0   -- TODO: wrong — 0 should be prepended to xs
+
+  assertMsg "cons makes [0,1,2,3]" (consed == [0, 1, 2, 3])
+
+  -- TODO: Fix the concatenation operator — lists use <>, not ++
+  let combined = [10, 20] ++ [30, 40]   -- TODO: wrong operator
+  assertMsg "concatenation" (combined == [10, 20, 30, 40])
+
+  -- TODO: Fix the expected values.
+  assertMsg "length of xs"  (length xs == 99)   -- TODO: wrong expected value
+  assertMsg "null of xs"    (null xs   == True)  -- TODO: wrong expected value
+  assertMsg "null of empty" (null ([] : [Int]) == False)  -- TODO: wrong expected value
+
+  assertMsg "head xs = 1"  (head xs == 1)
+  assertMsg "last xs = 3"  (last xs == 3)
+  assertMsg "reverse xs"   (reverse xs == [3, 2, 1])

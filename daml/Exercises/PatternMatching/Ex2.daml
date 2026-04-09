@@ -1,0 +1,63 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: PatternMatching 2 — Matching on Variants
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- You can pattern match on any constructor of a sum type.
+-- Each branch binds the constructor's payload to local names:
+--
+--   data Expr = Lit Int | Add Expr Expr | Neg Expr
+--
+--   eval : Expr -> Int
+--   eval e = case e of
+--     Lit n     -> n
+--     Add l r   -> eval l + eval r
+--     Neg inner -> -(eval inner)
+--
+-- The match is exhaustive — every constructor must be handled.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#variants
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- In `colorName`, the Red and Blue branches are swapped.
+-- In `eval`, the Add and Neg branches have wrong expressions — fix them.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.PatternMatching.Ex2 where
+
+import Daml.Script
+
+data Color = Red | Green | Blue
+
+-- TODO: Red and Blue are swapped — fix the two branches.
+colorName : Color -> Text
+colorName c = case c of
+  Red   -> "blue"    -- TODO: wrong
+  Green -> "green"
+  Blue  -> "red"     -- TODO: wrong
+
+data Expr = Lit Int | Add Expr Expr | Neg Expr
+
+-- TODO: Fix the Add and Neg branches.
+eval : Expr -> Int
+eval e = case e of
+  Lit n   -> n
+  Add l r -> eval l - eval r    -- TODO: should be addition
+  Neg x   -> eval x             -- TODO: should negate
+
+patternMatching2 : Script ()
+patternMatching2 = script do
+  assertMsg "Red is red"   (colorName Red   == "red")
+  assertMsg "Green is green" (colorName Green == "green")
+  assertMsg "Blue is blue" (colorName Blue  == "blue")
+
+  -- Lit 5 = 5
+  assertMsg "Lit 5 = 5" (eval (Lit 5) == 5)
+  -- Add (Lit 3) (Lit 4) = 7
+  assertMsg "Add 3 4 = 7" (eval (Add (Lit 3) (Lit 4)) == 7)
+  -- Neg (Lit 6) = -6
+  assertMsg "Neg 6 = -6" (eval (Neg (Lit 6)) == -6)
+  -- Neg (Add (Lit 1) (Lit 2)) = -3
+  assertMsg "Neg(Add 1 2) = -3" (eval (Neg (Add (Lit 1) (Lit 2))) == -3)

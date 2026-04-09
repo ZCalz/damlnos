@@ -1,0 +1,61 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Optional 2 — Pattern Matching on Optional
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Like any variant, `Optional` can be matched with `case`:
+--
+--   greet : Optional Text -> Text
+--   greet opt = case opt of
+--     None   -> "Hello, stranger!"
+--     Some n -> "Hello, " <> n <> "!"
+--
+-- This is the safest way to consume an `Optional` — the compiler forces
+-- you to handle both cases, so you can never accidentally use a None as
+-- if it were a value.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/DA-Optional.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- In `describe`, the Some and None branches are swapped.
+-- In `orElse'`, the function body should return the fallback when None.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Optional.Ex2 where
+
+import Daml.Script
+
+-- TODO: The None and Some branches are swapped — fix them.
+describe : Optional Int -> Text
+describe opt = case opt of
+  Some n -> "nothing"            -- TODO: wrong
+  None   -> "got " <> show n    -- TODO: wrong (n is not in scope here either)
+
+-- TODO: Return the fallback value when opt is None, otherwise return opt's value.
+orElse' : a -> Optional a -> a
+orElse' fallback opt = case opt of
+  None   -> error "should not crash"   -- TODO: should return fallback
+  Some x -> fallback                   -- TODO: should return x
+
+-- A more complex case: chain two Optional computations.
+-- `firstPositive` returns the first positive number in a list, or None.
+firstPositive : [Int] -> Optional Int
+firstPositive xs = case xs of
+  []     -> None
+  (n::rest)
+    | n > 0     -> Some n
+    | otherwise -> firstPositive rest
+
+optional2 : Script ()
+optional2 = script do
+  assertMsg "describe None"    (describe None     == "nothing")
+  assertMsg "describe Some 5"  (describe (Some 5) == "got 5")
+
+  assertMsg "orElse None 99"   (orElse' 99 (None : Optional Int) == 99)
+  assertMsg "orElse Some 7 99" (orElse' 99 (Some 7)              == 7)
+
+  assertMsg "firstPositive []"         (firstPositive []           == None)
+  assertMsg "firstPositive [-1,-2,3]"  (firstPositive [-1, -2, 3] == Some 3)
+  assertMsg "firstPositive [5,6]"      (firstPositive [5, 6]       == Some 5)

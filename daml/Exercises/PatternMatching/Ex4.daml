@@ -1,0 +1,64 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: PatternMatching 4 — List Patterns
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Lists can be matched on their structure:
+--
+--   []      — the empty list
+--   (x::xs) — head x consed onto tail xs  (also written [x] for exactly one)
+--   [x, y]  — exactly two elements
+--
+-- This is the foundation of recursive list processing:
+--
+--   mySum : [Int] -> Int
+--   mySum xs = case xs of
+--     []     -> 0
+--     (n::rest) -> n + mySum rest
+--
+-- Always handle the empty list first to avoid partial function warnings.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#lists
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- `myHead` returns the tail instead of the head — fix which binding you return.
+-- `mySum` multiplies instead of adds — fix the operator.
+-- `safeHead` has the Some and None cases swapped — fix them.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.PatternMatching.Ex4 where
+
+import Daml.Script
+
+-- TODO: myHead should return the first element. Fix which binding is returned.
+myHead : [a] -> a
+myHead xs = case xs of
+  (x::rest) -> rest   -- TODO: wrong — should return x, not rest
+  []        -> error "empty list"
+
+-- TODO: mySum should add elements, not multiply them.
+mySum : [Int] -> Int
+mySum xs = case xs of
+  []       -> 0
+  (n::rest) -> n * mySum rest   -- TODO: wrong operator
+
+-- TODO: Some and None are swapped — fix them.
+safeHead : [a] -> Optional a
+safeHead xs = case xs of
+  []    -> Some (error "impossible")   -- TODO: should be None
+  (x::_) -> None                       -- TODO: should be Some x
+
+patternMatching4 : Script ()
+patternMatching4 = script do
+  assertMsg "head [1,2,3] = 1"     (myHead [1, 2, 3]    == (1 : Int))
+  assertMsg "head [42] = 42"       (myHead [42]          == (42 : Int))
+
+  assertMsg "sum [] = 0"           (mySum []             == 0)
+  assertMsg "sum [1,2,3] = 6"      (mySum [1, 2, 3]      == 6)
+  assertMsg "sum [10,20] = 30"     (mySum [10, 20]        == 30)
+
+  assertMsg "safeHead [] = None"   (safeHead ([] : [Int]) == None)
+  assertMsg "safeHead [5] = Some 5" (safeHead [5]         == Some 5)
+  assertMsg "safeHead [1,2] = Some 1" (safeHead [1, 2]    == Some 1)

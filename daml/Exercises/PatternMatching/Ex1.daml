@@ -1,0 +1,52 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: PatternMatching 1 — case Expressions
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `case` is DAML's multi-branch expression. It matches a value against a list
+-- of patterns top-to-bottom and returns the first matching branch:
+--
+--   case n of
+--     0       -> "zero"
+--     1       -> "one"
+--     _       -> "many"   -- `_` is a wildcard: matches anything
+--
+-- Unlike `if / then / else`, `case` can have many branches and match on
+-- structure, not just Booleans. DAML requires all cases to be covered.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#case-expressions
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- The result strings in `describeSign` are in the wrong order.
+-- In `describeList`, the one-element and multi-element branches are swapped.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.PatternMatching.Ex1 where
+
+import Daml.Script
+
+-- TODO: The result strings are mismatched — fix the three branches.
+describeSign : Int -> Text
+describeSign n = case n `compare` 0 of
+  EQ -> "non-zero"   -- TODO: wrong
+  GT -> "negative"   -- TODO: wrong
+  LT -> "positive"   -- TODO: wrong
+
+-- TODO: The one-element and multi-element branches are swapped.
+describeList : [a] -> Text
+describeList xs = case xs of
+  []    -> "empty"
+  [_]   -> "more than one element"   -- TODO: wrong
+  _     -> "exactly one element"     -- TODO: wrong
+
+patternMatching1 : Script ()
+patternMatching1 = script do
+  assertMsg "sign of 5 is positive"  (describeSign 5    == "positive")
+  assertMsg "sign of -3 is negative" (describeSign (-3) == "negative")
+  assertMsg "sign of 0 is zero"      (describeSign 0    == "zero")
+
+  assertMsg "empty list"    (describeList ([] : [Int]) == "empty")
+  assertMsg "one element"   (describeList [42]         == "exactly one element")
+  assertMsg "many elements" (describeList [1, 2, 3]    == "more than one element")

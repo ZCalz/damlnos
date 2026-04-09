@@ -1,0 +1,61 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functional101 3 — flip, const, and Point-Free Style
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- A few more building blocks for functional programming in DAML:
+--
+--   flip  : (a -> b -> c) -> b -> a -> c
+--     Swaps the first two arguments of a function.
+--     flip (/) 2.0 10.0 = 10.0 / 2.0 = 5.0   (not 2.0 / 10.0)
+--
+--   const : a -> b -> a
+--     Returns its first argument, ignoring the second.
+--     const "hello" 42  =  "hello"
+--     map (const 0) [1,2,3]  =  [0,0,0]
+--
+-- Point-free style means defining a function without mentioning its argument:
+--   addTwo = (+2)          -- point-free
+--   addTwo x = x + 2      -- point-ful (same function)
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/Prelude.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- `divideBy`: use `flip (/)` so the argument becomes the dividend.
+-- `alwaysZero`: use `const` to ignore the input and always return 0.
+-- `countElements`: write it point-free using `length` and `filter`.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functional101.Ex3 where
+
+import Daml.Script
+
+-- TODO: `divideBy d x` should compute x / d (x divided by d).
+-- Fix: use `flip (/)` so the argument order is (dividend, divisor).
+divideBy : Decimal -> Decimal -> Decimal
+divideBy d x = d / x   -- TODO: wrong — divides d by x, not x by d
+
+-- TODO: Should always return 0, regardless of input.
+-- Fix: use `const 0` instead of the identity function.
+alwaysZero : Int -> Int
+alwaysZero x = x   -- TODO: returns x, should return 0
+
+-- TODO: Write `countWhere` point-free.
+-- `countWhere p xs` = number of elements in xs satisfying predicate p.
+-- Use `length` and `filter` without mentioning xs.
+countWhere : (a -> Bool) -> [a] -> Int
+countWhere p xs = length (filter p xs)   -- TODO: rewrite this point-free (remove xs)
+
+functional101_3 : Script ()
+functional101_3 = script do
+  assertMsg "divideBy 2.0 10.0 = 5.0"  (divideBy 2.0 10.0 == 5.0)
+  assertMsg "divideBy 4.0 100.0 = 25.0" (divideBy 4.0 100.0 == 25.0)
+
+  assertMsg "alwaysZero 1 = 0"   (alwaysZero 1   == 0)
+  assertMsg "alwaysZero 999 = 0" (alwaysZero 999 == 0)
+  assertMsg "map alwaysZero"     (map alwaysZero [1, 2, 3] == [0, 0, 0])
+
+  assertMsg "countWhere even [1..6] = 3" (countWhere even [1, 2, 3, 4, 5, 6] == 3)
+  assertMsg "countWhere (>3) [1..5] = 2" (countWhere (> 3) [1, 2, 3, 4, 5]   == 2)

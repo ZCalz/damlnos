@@ -1,0 +1,53 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Lists 4 — foldl
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- `foldl` reduces a list to a single value by applying a binary function
+-- repeatedly, starting from an initial accumulator:
+--
+--   foldl : (b -> a -> b) -> b -> [a] -> b
+--           ^accumulator fn  ^initial  ^list
+--
+--   foldl (+) 0 [1, 2, 3]  =  ((0 + 1) + 2) + 3  =  6
+--   foldl (*) 1 [1, 2, 3]  =  ((1 * 1) * 2) * 3  =  6
+--   foldl (\acc x -> acc <> show x) "" [1,2,3]  =  "123"
+--
+-- The accumulator type (b) can differ from the element type (a).
+-- Note: `foldl` processes left-to-right; `foldr` processes right-to-left.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/stdlib/Prelude.html#function-ghc-base-foldl
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Fix the initial accumulator or the binary function in each foldl call.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Lists.Ex4 where
+
+import Daml.Script
+
+lists4 : Script ()
+lists4 = script do
+  let nums = [1, 2, 3, 4, 5] : [Int]
+
+  -- TODO: Sum should start at 0, not 100.
+  let total = foldl (+) 100 nums
+  assertMsg "sum = 15" (total == 15)
+
+  -- TODO: Product should use (*), not (+).
+  let product' = foldl (+) 1 nums
+  assertMsg "product = 120" (product' == 120)
+
+  -- TODO: Find maximum using foldl. The initial value should be the first element.
+  -- Fix: initial accumulator is 0, but nums contains only positives — use head nums.
+  -- Also fix the binary function to keep the larger value.
+  let maxVal = foldl (\acc x -> acc + x) 0 nums
+  assertMsg "max = 5" (maxVal == 5)
+
+  -- TODO: Build a reversed list with foldl.
+  -- The accumulator is a list; the binary fn should prepend each element.
+  -- Fix: currently appends (wrong order).
+  let reversed = foldl (\acc x -> acc <> [x]) ([] : [Int]) nums
+  assertMsg "reversed = [5,4,3,2,1]" (reversed == [5, 4, 3, 2, 1])

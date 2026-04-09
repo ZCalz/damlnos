@@ -1,0 +1,67 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: PatternMatching 3 — Tuple and Wildcard Patterns
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Tuples are written `(a, b)` and can be matched structurally:
+--
+--   swap : (a, b) -> (b, a)
+--   swap pair = case pair of
+--     (x, y) -> (y, x)
+--
+-- The wildcard `_` matches any value without binding it — use it when you
+-- don't need the value in that branch:
+--
+--   isOrigin : (Decimal, Decimal) -> Bool
+--   isOrigin point = case point of
+--     (0.0, 0.0) -> True
+--     _          -> False
+--
+-- Tuple patterns can be nested: `(x, (y, z))` matches a nested tuple.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#tuples
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- `myFst` and `mySnd` extract the wrong element — fix the wildcard placement.
+-- `classify2D` has the quadrant labels mixed up — fix the four branches.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.PatternMatching.Ex3 where
+
+import Daml.Script
+
+-- TODO: myFst should return the first element. Fix which one is wildcarded.
+myFst : (a, b) -> a
+myFst pair = case pair of
+  (_, y) -> y   -- TODO: wrong — binds y (second), discards first
+
+-- TODO: mySnd should return the second element. Fix which one is wildcarded.
+mySnd : (a, b) -> b
+mySnd pair = case pair of
+  (x, _) -> x   -- TODO: wrong — binds x (first), discards second
+
+-- TODO: The quadrant strings are all wrong — fix all four branches.
+-- Quadrant convention: Q1 = (+,+), Q2 = (-,+), Q3 = (-,-), Q4 = (+,-)
+classify2D : (Decimal, Decimal) -> Text
+classify2D point = case point of
+  (0.0, 0.0) -> "origin"
+  (x, y)
+    | x > 0.0 && y > 0.0 -> "Q3"   -- TODO: wrong
+    | x < 0.0 && y > 0.0 -> "Q4"   -- TODO: wrong
+    | x < 0.0 && y < 0.0 -> "Q1"   -- TODO: wrong
+    | otherwise           -> "Q2"   -- TODO: wrong (x>0, y<0)
+
+patternMatching3 : Script ()
+patternMatching3 = script do
+  assertMsg "fst (1,2) = 1"   (myFst (1, 2)     == (1 : Int))
+  assertMsg "fst (True,0) = True" (myFst (True, 0) == True)
+  assertMsg "snd (1,2) = 2"   (mySnd (1, 2)     == (2 : Int))
+  assertMsg "snd ('a','b') = 'b'" (mySnd ("a","b") == "b")
+
+  assertMsg "origin"   (classify2D (0.0,  0.0)  == "origin")
+  assertMsg "Q1 (+,+)" (classify2D (1.0,  1.0)  == "Q1")
+  assertMsg "Q2 (-,+)" (classify2D (-1.0, 1.0)  == "Q2")
+  assertMsg "Q3 (-,-)" (classify2D (-1.0, -1.0) == "Q3")
+  assertMsg "Q4 (+,-)" (classify2D (1.0,  -1.0) == "Q4")
