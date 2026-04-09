@@ -1,0 +1,26 @@
+-- SOLUTION: Types 3
+-- 1. `+` → `<>` for Text concatenation
+-- 2. Expected length 99 → 13  ("Hello, World!" has 13 characters)
+-- 3. `42` (Int) → `show 42` (Text)
+
+module Solutions.Exercises.Types.Ex3 where
+
+import DA.Text qualified as T
+import Daml.Script
+
+types3 : Script ()
+types3 = script do
+  let hello = "Hello"
+  let world = "World"
+
+  let greeting : Text = hello <> ", " <> world <> "!"   -- fixed: + → <>
+  assertMsg "greeting should be 'Hello, World!'" (greeting == "Hello, World!")
+
+  let len : Int = T.length greeting
+  assertMsg "length of 'Hello, World!' should be 13" (len == 13)   -- fixed: 99 → 13
+
+  let numText : Text = show 42   -- fixed: show converts Int to Text
+  assertMsg "show 42 should produce \"42\"" (numText == "42")
+
+  let shout = T.toUpper greeting
+  assertMsg "toUpper should capitalise" (T.isPrefixOf "HELLO" shout)

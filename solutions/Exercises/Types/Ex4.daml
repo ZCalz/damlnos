@@ -1,0 +1,22 @@
+-- SOLUTION: Types 4
+-- 1. `let bob = alice` → `bob <- allocateParty "Bob"`
+-- 2. Uncommented and completed the Charlie block.
+
+module Solutions.Exercises.Types.Ex4 where
+
+import Daml.Script
+
+types4 : Script ()
+types4 = script do
+  alice <- allocateParty "Alice"
+
+  bob <- allocateParty "Bob"   -- fixed: was `let bob = alice`
+
+  assertMsg "alice and bob must be different parties" (alice /= bob)
+
+  charlie <- allocateParty "Charlie"   -- uncommented and completed
+  assertMsg "charlie is not alice" (charlie /= alice)
+  assertMsg "charlie is not bob"   (charlie /= bob)
+
+  debug alice
+  debug bob

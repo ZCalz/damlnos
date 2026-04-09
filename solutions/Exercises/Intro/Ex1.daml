@@ -1,0 +1,15 @@
+-- SOLUTION: Intro 1
+-- The only change needed: assert False  →  assert True
+
+module Solutions.Exercises.Intro.Ex1 where
+
+import Daml.Script
+
+intro1 : Script ()
+intro1 = script do
+  debug "Welcome to Damlers!"
+  debug "You are learning DAML — a language for writing smart contracts."
+  debug "Each exercise has one or more Script tests. Fix the code to make them pass."
+  debug "The damlers watcher re-runs the tests every time you save this file."
+
+  assert True   -- fixed

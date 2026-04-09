@@ -1,0 +1,15 @@
+-- SOLUTION: Intro 2
+-- The assertion used 3 instead of 2.  1 + 1 == 2.
+
+module Solutions.Exercises.Intro.Ex2 where
+
+import Daml.Script
+
+intro2 : Script ()
+intro2 = script do
+  let x : Int = 1 + 1
+
+  assertMsg "x should equal 2" (x == 2)   -- fixed: 3 → 2
+
+  let y : Int = 10 - 3
+  assertMsg "y should equal 7" (y == 7)

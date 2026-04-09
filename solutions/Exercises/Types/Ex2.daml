@@ -1,0 +1,21 @@
+-- SOLUTION: Types 2
+-- decResult:  0.0  →  7.0 / 2.0        (Decimal division)
+-- converted:  0.0  →  intToDecimal intResult
+
+module Solutions.Exercises.Types.Ex2 where
+
+import Daml.Script
+
+types2 : Script ()
+types2 = script do
+  let a : Int = 7
+  let b : Int = 2
+
+  let intResult : Int = a / b
+  assertMsg "Int division: 7 / 2 = 3" (intResult == 3)
+
+  let decResult : Decimal = 7.0 / 2.0    -- fixed
+  assertMsg "Decimal division: 7.0 / 2.0 = 3.5" (decResult == 3.5)
+
+  let converted : Decimal = intToDecimal intResult   -- fixed
+  assertMsg "Converted intResult should be 3.0" (converted == 3.0)

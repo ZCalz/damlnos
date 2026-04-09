@@ -1,0 +1,22 @@
+-- SOLUTION: Types 1
+-- Each value had the wrong type. Fixed:
+--   myText    : Text    = "hello"    (Text literal uses double quotes)
+--   myInt     : Int     = 42         (Int literal — whole number)
+--   myDecimal : Decimal = 3.14       (Decimal literal — must have decimal point)
+--   myBool    : Bool    = True       (Bool is True or False)
+
+module Solutions.Exercises.Types.Ex1 where
+
+import Daml.Script
+
+types1 : Script ()
+types1 = script do
+  let myText    : Text    = "hello"
+  let myInt     : Int     = 42
+  let myDecimal : Decimal = 3.14
+  let myBool    : Bool    = True
+
+  assertMsg "myText should not be empty"         (myText /= "")
+  assertMsg "myInt should be positive"           (myInt > 0)
+  assertMsg "myDecimal should be greater than 1" (myDecimal > 1.0)
+  debug myBool
