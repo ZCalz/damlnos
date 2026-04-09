@@ -1,0 +1,30 @@
+-- SOLUTION: Records 4
+-- Added `deriving (Eq, Show)` to both Colour and Palette.
+
+module Solutions.Exercises.Records.Ex4 where
+
+import Daml.Script
+
+data Colour = Colour with
+  r, g, b : Int
+    deriving (Eq, Show)   -- fixed
+
+data Palette = Palette with
+  primary   : Colour
+  secondary : Colour
+    deriving (Eq, Show)   -- fixed
+
+records4 : Script ()
+records4 = script do
+  let red   = Colour with r = 255; g = 0;   b = 0
+  let blue  = Colour with r = 0;   g = 0;   b = 255
+  let green = Colour with r = 0;   g = 128; b = 0
+
+  assertMsg "red is not blue" (red /= blue)
+  assertMsg "red equals red"  (red == red)
+
+  let p = Palette with primary = red; secondary = blue
+  assertMsg "palettes match" (p == Palette with primary = red; secondary = blue)
+
+  debug red
+  debug green

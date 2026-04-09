@@ -1,0 +1,59 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functions 5 — Higher-Order Functions
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Functions are first-class values in DAML. You can pass them as arguments,
+-- return them, and store them in data structures.
+--
+-- A higher-order function is one that takes a function as an argument:
+--
+--   applyTwice : (a -> a) -> a -> a
+--   applyTwice f x = f (f x)     -- applies f to x, then f to the result
+--
+-- Lambda (anonymous) functions use backslash syntax:
+--   \x -> x + 1        -- a function that adds 1
+--   \x y -> x + y      -- a function that adds two numbers
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/2_DamlScript.html#higher-order-functions
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- 1. `applyTwice` only applies f once — apply it one more time.
+-- 2. `applyN` is missing its recursive case — add it.
+-- 3. Fix the lambda in the script body (the wrong operator is used).
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functions.Ex5 where
+
+import Daml.Script
+
+-- TODO: Fix applyTwice — it should apply f to x, then apply f to that result.
+applyTwice : (a -> a) -> a -> a
+applyTwice f x = f x   -- TODO: apply f one more time
+
+-- TODO: Fix applyN — it should apply f exactly n times.
+-- Base case (n <= 0): return x unchanged.
+-- Recursive case: apply f once, then recurse with n-1.
+applyN : Int -> (a -> a) -> a -> a
+applyN n f x
+  | n <= 0    = x
+  | otherwise = x   -- TODO: replace with the recursive case
+
+functions5 : Script ()
+functions5 = script do
+  let addOne  = (\x -> x + 1) : Int -> Int
+  let double  = (\x -> x * 2) : Int -> Int
+
+  assertMsg "applyTwice addOne 0 = 2"  (applyTwice addOne 0  == 2)
+  assertMsg "applyTwice double 1 = 4"  (applyTwice double 1  == 4)
+  assertMsg "applyTwice double 3 = 12" (applyTwice double 3  == 12)
+
+  assertMsg "applyN 0 addOne 5 = 5"   (applyN 0 addOne 5  == 5)
+  assertMsg "applyN 3 addOne 0 = 3"   (applyN 3 addOne 0  == 3)
+  assertMsg "applyN 4 double 1 = 16"  (applyN 4 double 1  == 16)
+
+  -- TODO: Fix the lambda — it should multiply by 3, not add 3.
+  let tripleAll = map (\x -> x + 3) [1, 2, 3, 4]
+  assertMsg "tripleAll [1,2,3,4] = [3,6,9,12]" (tripleAll == [3, 6, 9, 12])

@@ -1,0 +1,31 @@
+-- SOLUTION: Records 3
+-- restocked: 0 → stock.quantity + 50
+-- discounted: 0.0 → stock.price * 0.9
+
+module Solutions.Exercises.Records.Ex3 where
+
+import Daml.Script
+
+data Inventory = Inventory with
+  item     : Text
+  quantity : Int
+  price    : Decimal
+
+records3 : Script ()
+records3 = script do
+  let stock = Inventory with
+                item     = "Widget"
+                quantity = 100
+                price    = 9.99
+
+  let restocked = stock with quantity = stock.quantity + 50   -- fixed
+
+  assertMsg "item unchanged"         (restocked.item     == stock.item)
+  assertMsg "quantity should be 150" (restocked.quantity == 150)
+  assertMsg "price unchanged"        (restocked.price    == stock.price)
+
+  let discounted = stock with price = stock.price * 0.9   -- fixed
+
+  assertMsg "item unchanged after discount"     (discounted.item     == stock.item)
+  assertMsg "quantity unchanged after discount" (discounted.quantity == stock.quantity)
+  assertMsg "price should be 8.991"             (discounted.price    == 8.991)

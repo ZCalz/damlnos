@@ -1,0 +1,57 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functions 1 — Definitions and Type Signatures
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- A DAML function is defined by:
+--   1. A type signature:  name : ArgType -> ReturnType
+--   2. An equation:       name arg = expr
+--
+-- Functions with multiple arguments use curried style:
+--   add : Int -> Int -> Int
+--   add x y = x + y
+--
+-- Functions are pure — no side effects, no mutation, no I/O.
+-- The same input always produces the same output.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/2_DamlScript.html
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Each function body is wrong. Fix the expression on the right-hand side of `=`.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functions.Ex1 where
+
+import Daml.Script
+
+-- TODO: Fix the body — `square` should multiply x by itself, not add.
+square : Int -> Int
+square x = x + x
+
+-- TODO: Fix the body — `hypotenuse` should return sqrt(a² + b²).
+-- Use `sqrt` from the Prelude (it works on Decimal).
+-- You will need to convert Int args to Decimal with `intToDecimal`.
+hypotenuse : Decimal -> Decimal -> Decimal
+hypotenuse a b = a + b
+
+-- TODO: Fix the body — `clamp lo hi x` should return:
+--   lo  if x < lo
+--   hi  if x > hi
+--   x   otherwise
+-- Currently it always returns x.
+clamp : Int -> Int -> Int -> Int
+clamp _lo _hi x = x
+
+functions1 : Script ()
+functions1 = script do
+  assertMsg "square 3 = 9"         (square 3   == 9)
+  assertMsg "square 5 = 25"        (square 5   == 25)
+  assertMsg "square 0 = 0"         (square 0   == 0)
+
+  assertMsg "hypotenuse 3.0 4.0 = 5.0" (hypotenuse 3.0 4.0 == 5.0)
+
+  assertMsg "clamp 0 10 5 = 5"     (clamp 0 10 5    == 5)
+  assertMsg "clamp 0 10 (-3) = 0"  (clamp 0 10 (-3) == 0)
+  assertMsg "clamp 0 10 99 = 10"   (clamp 0 10 99   == 10)

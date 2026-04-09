@@ -1,0 +1,46 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Records 1 — Defining a Record Type
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- A DAML record is a named product type — a bundle of named fields.
+-- The syntax is:
+--
+--   data TypeName = TypeName with
+--     field1 : Type1
+--     field2 : Type2
+--
+-- The constructor name (right of `=`) is usually the same as the type name.
+-- Fields are indented inside the `with` block.
+-- Multiple fields of the same type can share a line: `x, y : Decimal`
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#records
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Both record definitions are missing the `with` keyword after the constructor.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Records.Ex1 where
+
+import Daml.Script
+
+-- TODO: Fix this record — it is missing the `with` keyword.
+data Person = Person
+  name : Text
+  age  : Int
+
+-- TODO: Fix this one too. Fields of the same type can share a line.
+data Point = Point
+  x, y : Decimal
+
+records1 : Script ()
+records1 = script do
+  let alice = Person with name = "Alice"; age = 30
+  let origin = Point with x = 0.0; y = 0.0
+
+  assertMsg "name should be Alice" (alice.name == "Alice")
+  assertMsg "age should be 30"     (alice.age  == 30)
+  assertMsg "origin x should be 0" (origin.x   == 0.0)
+  assertMsg "origin y should be 0" (origin.y   == 0.0)

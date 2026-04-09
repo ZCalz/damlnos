@@ -1,0 +1,28 @@
+-- SOLUTION: Functions 2
+-- Swapped branches back in absolute, max', and describe.
+
+module Solutions.Exercises.Functions.Ex2 where
+
+import Daml.Script
+
+absolute : Int -> Int
+absolute n = if n < 0 then -n else n   -- fixed: then/else swapped
+
+max' : Int -> Int -> Int
+max' a b = if a >= b then a else b   -- fixed: then/else swapped
+
+describe : Int -> Text
+describe n = if n % 2 == 0 then "even" else "odd"   -- fixed: then/else swapped
+
+functions2 : Script ()
+functions2 = script do
+  assertMsg "absolute (-5) = 5"  (absolute (-5) == 5)
+  assertMsg "absolute 3 = 3"     (absolute 3    == 3)
+  assertMsg "absolute 0 = 0"     (absolute 0    == 0)
+
+  assertMsg "max' 3 7 = 7"       (max' 3 7  == 7)
+  assertMsg "max' 10 2 = 10"     (max' 10 2 == 10)
+  assertMsg "max' 5 5 = 5"       (max' 5 5  == 5)
+
+  assertMsg "describe 4 = even"  (describe 4 == "even")
+  assertMsg "describe 7 = odd"   (describe 7 == "odd")

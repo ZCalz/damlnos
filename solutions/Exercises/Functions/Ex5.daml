@@ -1,0 +1,32 @@
+-- SOLUTION: Functions 5
+-- applyTwice: f x → f (f x)
+-- applyN recursive case: x → f (applyN (n-1) f x)
+-- lambda: \x -> x + 3 → \x -> x * 3
+
+module Solutions.Exercises.Functions.Ex5 where
+
+import Daml.Script
+
+applyTwice : (a -> a) -> a -> a
+applyTwice f x = f (f x)   -- fixed
+
+applyN : Int -> (a -> a) -> a -> a
+applyN n f x
+  | n <= 0    = x
+  | otherwise = f (applyN (n - 1) f x)   -- fixed
+
+functions5 : Script ()
+functions5 = script do
+  let addOne = (\x -> x + 1) : Int -> Int
+  let double = (\x -> x * 2) : Int -> Int
+
+  assertMsg "applyTwice addOne 0 = 2"  (applyTwice addOne 0  == 2)
+  assertMsg "applyTwice double 1 = 4"  (applyTwice double 1  == 4)
+  assertMsg "applyTwice double 3 = 12" (applyTwice double 3  == 12)
+
+  assertMsg "applyN 0 addOne 5 = 5"   (applyN 0 addOne 5  == 5)
+  assertMsg "applyN 3 addOne 0 = 3"   (applyN 3 addOne 0  == 3)
+  assertMsg "applyN 4 double 1 = 16"  (applyN 4 double 1  == 16)
+
+  let tripleAll = map (\x -> x * 3) [1, 2, 3, 4]   -- fixed: + → *
+  assertMsg "tripleAll [1,2,3,4] = [3,6,9,12]" (tripleAll == [3, 6, 9, 12])

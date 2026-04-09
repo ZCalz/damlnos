@@ -1,0 +1,29 @@
+-- SOLUTION: Records 2
+-- Fixed field names: name (not .name), author (not .writer), pages (not .length).
+-- Used shorthand construction for b2.
+
+module Solutions.Exercises.Records.Ex2 where
+
+import Daml.Script
+
+data Book = Book with
+  title  : Text
+  author : Text
+  pages  : Int
+
+records2 : Script ()
+records2 = script do
+  let b = Book with
+            title  = "The Little DAML Book"
+            author = "A. Ledger"
+            pages  = 256
+
+  assertMsg "title check"  (b.title  == "The Little DAML Book")  -- fixed: .name → .title
+  assertMsg "author check" (b.author == "A. Ledger")              -- fixed: .writer → .author
+  assertMsg "pages check"  (b.pages  == 256)                      -- fixed: .length → .pages
+
+  let title  = "DAML for Beginners"
+  let author = "B. Contract"
+  let pages  = 128
+  let b2 = Book with title; author; pages   -- fixed: shorthand construction
+  assertMsg "shorthand title" (b2.title == "DAML for Beginners")

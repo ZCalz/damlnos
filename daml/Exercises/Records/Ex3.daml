@@ -1,0 +1,56 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Records 3 — Record Update Syntax
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Records are immutable in DAML. To "change" a field, you create a new record
+-- with the updated value, copying all other fields.
+--
+-- Verbose way (tedious for large records):
+--   let older = Person with name = alice.name; age = alice.age + 1
+--
+-- Record update syntax (idiomatic):
+--   let older = alice with age = alice.age + 1
+--
+-- The `with` after a value expression copies all fields from that value,
+-- then overrides only the fields you list.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#record-update
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Fix the `with` expressions: use record update syntax and correct the values.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Records.Ex3 where
+
+import Daml.Script
+
+data Inventory = Inventory with
+  item     : Text
+  quantity : Int
+  price    : Decimal
+
+records3 : Script ()
+records3 = script do
+  let stock = Inventory with
+                item     = "Widget"
+                quantity = 100
+                price    = 9.99
+
+  -- TODO: Use record update syntax to increase quantity by 50.
+  -- Replace the right-hand side with: stock with quantity = stock.quantity + 50
+  let restocked = stock with quantity = 0   -- TODO: fix the value
+
+  assertMsg "item unchanged"          (restocked.item     == stock.item)
+  assertMsg "quantity should be 150"  (restocked.quantity == 150)
+  assertMsg "price unchanged"         (restocked.price    == stock.price)
+
+  -- TODO: Apply a 10% price discount. Use record update syntax.
+  -- The new price should be stock.price * 0.9
+  let discounted = stock with price = 0.0   -- TODO: fix the value
+
+  assertMsg "item unchanged after discount"    (discounted.item     == stock.item)
+  assertMsg "quantity unchanged after discount" (discounted.quantity == stock.quantity)
+  assertMsg "price should be 8.991"            (discounted.price    == 8.991)

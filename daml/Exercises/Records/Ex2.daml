@@ -1,0 +1,56 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Records 2 — Field Access
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Record fields are accessed with dot notation:
+--
+--   let alice = Person with name = "Alice"; age = 30
+--   alice.name   -- "Alice"
+--   alice.age    -- 30
+--
+-- When constructing a record, if a variable in scope has the same name as a
+-- field, you can omit the `= value` part:
+--
+--   let name = "Alice"
+--   let age  = 30
+--   let alice = Person with name; age   -- shorthand
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#records
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- The assertions reference field names that do not exist on the record.
+-- Check the `data` definition and fix each dot-access expression.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Records.Ex2 where
+
+import Daml.Script
+
+data Book = Book with
+  title  : Text
+  author : Text
+  pages  : Int
+
+records2 : Script ()
+records2 = script do
+  let b = Book with
+            title  = "The Little DAML Book"
+            author = "A. Ledger"
+            pages  = 256
+
+  -- TODO: Fix the field names — each one references a field that doesn't exist.
+  assertMsg "title check"  (b.name   == "The Little DAML Book")
+  assertMsg "author check" (b.writer == "A. Ledger")
+  assertMsg "pages check"  (b.length == 256)
+
+  -- TODO: Use shorthand construction — bind `title` and `pages` in let,
+  -- then construct a Book using the implicit field shorthand.
+  let title  = "DAML for Beginners"
+  let author = "B. Contract"
+  let pages  = 128
+  let b2 = Book with title = title; author = author; pages = pages
+  -- Change the line above to use shorthand: Book with title; author; pages
+  assertMsg "shorthand title" (b2.title == "DAML for Beginners")

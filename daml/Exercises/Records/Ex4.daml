@@ -1,0 +1,57 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Records 4 — Deriving Eq and Show
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- By default, custom record types do not support `==` (equality) or `show`
+-- (text representation). You opt in by deriving type class instances:
+--
+--   data Colour = Colour with
+--     r, g, b : Int
+--       deriving (Eq, Show)
+--
+-- `deriving (Eq)`   — enables == and /= on the type
+-- `deriving (Show)` — enables show and debug on the type
+-- Both can be derived together: `deriving (Eq, Show)`
+--
+-- Note: the `deriving` clause is indented under the last field of the `with`
+-- block, at the same level as the fields.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/3_Data.html#deriving
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Add `deriving (Eq, Show)` to both record definitions below.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Records.Ex4 where
+
+import Daml.Script
+
+-- TODO: Add deriving (Eq, Show) — without it, == will not compile.
+data Colour = Colour with
+  r, g, b : Int
+
+-- TODO: Add deriving (Eq, Show) here too.
+data Palette = Palette with
+  primary   : Colour
+  secondary : Colour
+
+records4 : Script ()
+records4 = script do
+  let red   = Colour with r = 255; g = 0;   b = 0
+  let blue  = Colour with r = 0;   g = 0;   b = 255
+  let green = Colour with r = 0;   g = 128; b = 0
+
+  -- These will not compile until you add deriving (Eq) to Colour.
+  assertMsg "red is not blue"  (red /= blue)
+  assertMsg "red equals red"   (red == red)
+
+  let p = Palette with primary = red; secondary = blue
+  -- This will not compile until you add deriving (Eq) to Palette.
+  assertMsg "palettes match" (p == Palette with primary = red; secondary = blue)
+
+  -- debug requires Show. This will fail until you add deriving (Show).
+  debug red
+  debug green

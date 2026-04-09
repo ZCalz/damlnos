@@ -1,0 +1,23 @@
+-- SOLUTION: Records 1
+-- Added the missing `with` keyword after each constructor name.
+
+module Solutions.Exercises.Records.Ex1 where
+
+import Daml.Script
+
+data Person = Person with   -- fixed: added `with`
+  name : Text
+  age  : Int
+
+data Point = Point with    -- fixed: added `with`
+  x, y : Decimal
+
+records1 : Script ()
+records1 = script do
+  let alice  = Person with name = "Alice"; age = 30
+  let origin = Point  with x = 0.0; y = 0.0
+
+  assertMsg "name should be Alice" (alice.name  == "Alice")
+  assertMsg "age should be 30"     (alice.age   == 30)
+  assertMsg "origin x should be 0" (origin.x    == 0.0)
+  assertMsg "origin y should be 0" (origin.y    == 0.0)

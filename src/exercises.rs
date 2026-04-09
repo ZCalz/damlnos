@@ -59,6 +59,71 @@ pub const EXERCISES: &[Exercise] = &[
         hint: "Use `allocateParty \"Bob\"` to create a new party and bind it with `<-`.",
         section: "01 · Types",
     },
+    // ── 02 Records ──────────────────────────────────────────────────────────
+    Exercise {
+        slug: "records1",
+        name: "Records 1 — Defining a Record Type",
+        file: "daml/Exercises/Records/Ex1.daml",
+        hint: "Both record definitions are missing the `with` keyword after the constructor name.",
+        section: "02 · Records",
+    },
+    Exercise {
+        slug: "records2",
+        name: "Records 2 — Field Access",
+        file: "daml/Exercises/Records/Ex2.daml",
+        hint: "Check the `data Book` definition — the field names in the assertions don't match.",
+        section: "02 · Records",
+    },
+    Exercise {
+        slug: "records3",
+        name: "Records 3 — Record Update Syntax",
+        file: "daml/Exercises/Records/Ex3.daml",
+        hint: "Use `stock with quantity = stock.quantity + 50` and `stock with price = stock.price * 0.9`.",
+        section: "02 · Records",
+    },
+    Exercise {
+        slug: "records4",
+        name: "Records 4 — Deriving Eq and Show",
+        file: "daml/Exercises/Records/Ex4.daml",
+        hint: "Add `deriving (Eq, Show)` indented under the last field of each record's `with` block.",
+        section: "02 · Records",
+    },
+    // ── 03 Functions ────────────────────────────────────────────────────────
+    Exercise {
+        slug: "functions1",
+        name: "Functions 1 — Definitions and Type Signatures",
+        file: "daml/Exercises/Functions/Ex1.daml",
+        hint: "square: use `*` not `+`. hypotenuse: use `sqrt (a*a + b*b)`. clamp: add guards for lo and hi.",
+        section: "03 · Functions",
+    },
+    Exercise {
+        slug: "functions2",
+        name: "Functions 2 — if / then / else",
+        file: "daml/Exercises/Functions/Ex2.daml",
+        hint: "The `then` and `else` branches are swapped in each function — swap them back.",
+        section: "03 · Functions",
+    },
+    Exercise {
+        slug: "functions3",
+        name: "Functions 3 — Guards",
+        file: "daml/Exercises/Functions/Ex3.daml",
+        hint: "Fix the result strings in `classify`, and replace `???` with `otherwise` in `letterGrade`.",
+        section: "03 · Functions",
+    },
+    Exercise {
+        slug: "functions4",
+        name: "Functions 4 — let / in and where",
+        file: "daml/Exercises/Functions/Ex4.daml",
+        hint: "pi = 3.14159, baseArea = circleArea r, and swap sideA/sideB back to a and b.",
+        section: "03 · Functions",
+    },
+    Exercise {
+        slug: "functions5",
+        name: "Functions 5 — Higher-Order Functions",
+        file: "daml/Exercises/Functions/Ex5.daml",
+        hint: "applyTwice: add one more `f` application. applyN: recurse with `f (applyN (n-1) f x)`. Lambda: change `+` to `*`.",
+        section: "03 · Functions",
+    },
 ];
 
 /// Look up an exercise by slug. Returns `None` if not found.

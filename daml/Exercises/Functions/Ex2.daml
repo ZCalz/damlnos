@@ -1,0 +1,53 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functions 2 — if / then / else
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- In DAML, `if / then / else` is an *expression*, not a statement.
+-- Both branches must have the same type, and `else` is always required.
+--
+--   max : Int -> Int -> Int
+--   max a b = if a >= b then a else b
+--
+-- You can nest them, but `case` (next module) is usually cleaner for
+-- more than two branches.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/2_DamlScript.html#if-then-else
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- The `then` and `else` branches are swapped in each function. Swap them back.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functions.Ex2 where
+
+import Daml.Script
+
+-- TODO: The branches are swapped — fix them.
+absolute : Int -> Int
+absolute n = if n < 0 then n else -n
+
+-- TODO: The branches are swapped — fix them.
+-- `max'` should return the larger of two Ints.
+max' : Int -> Int -> Int
+max' a b = if a >= b then b else a
+
+-- TODO: The branches are swapped — fix them.
+-- `describe` should return "even" for even numbers and "odd" for odd ones.
+-- Use the `%` (modulo) operator to check for evenness.
+describe : Int -> Text
+describe n = if n % 2 == 0 then "odd" else "even"
+
+functions2 : Script ()
+functions2 = script do
+  assertMsg "absolute (-5) = 5"   (absolute (-5) == 5)
+  assertMsg "absolute 3 = 3"      (absolute 3    == 3)
+  assertMsg "absolute 0 = 0"      (absolute 0    == 0)
+
+  assertMsg "max' 3 7 = 7"        (max' 3 7  == 7)
+  assertMsg "max' 10 2 = 10"      (max' 10 2 == 10)
+  assertMsg "max' 5 5 = 5"        (max' 5 5  == 5)
+
+  assertMsg "describe 4 = even"   (describe 4 == "even")
+  assertMsg "describe 7 = odd"    (describe 7 == "odd")

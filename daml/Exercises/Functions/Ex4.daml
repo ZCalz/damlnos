@@ -1,0 +1,69 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functions 4 — let / in and where
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Two ways to name intermediate values inside a function:
+--
+-- `let / in` — inline, expression-oriented:
+--   circleArea r =
+--     let pi = 3.14159
+--         r2 = r * r
+--     in  pi * r2
+--
+-- `where` — after the function body, clause-oriented:
+--   circleArea r = pi * r * r
+--     where
+--       pi = 3.14159
+--
+-- Both are equivalent. `where` is idiomatic for helper definitions;
+-- `let / in` is more natural for sequential steps.
+-- Inside `script do`, use `let x = expr` (no `in`) — the `do` block
+-- provides the continuation automatically.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/2_DamlScript.html#let-and-where
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- Fill in the missing values in the `where` and `let / in` clauses.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functions.Ex4 where
+
+import Daml.Script
+
+-- TODO: Fill in the value of `pi` in the where clause.
+circleArea : Decimal -> Decimal
+circleArea r = pi * r * r
+  where
+    pi = 0.0   -- TODO: use 3.14159
+
+-- TODO: Fill in the missing intermediate value using let/in.
+-- `cylinderVolume r h` = area of circular base * height
+cylinderVolume : Decimal -> Decimal -> Decimal
+cylinderVolume r h =
+  let baseArea = 0.0   -- TODO: compute the base area (hint: reuse circleArea)
+  in  baseArea * h
+
+-- TODO: Fix the where clause — `sideA` and `sideB` are swapped.
+-- The perimeter of a right triangle with legs a, b is a + b + hypotenuse.
+trianglePerimeter : Decimal -> Decimal -> Decimal
+trianglePerimeter a b = sideA + sideB + hyp
+  where
+    sideA = b           -- TODO: should be a
+    sideB = a           -- TODO: should be b
+    hyp   = sqrt (a * a + b * b)
+
+functions4 : Script ()
+functions4 = script do
+  -- circleArea checks (pi * r^2)
+  assertMsg "circleArea 1.0 ≈ 3.14159"  (circleArea 1.0 == 3.14159)
+  assertMsg "circleArea 0.0 = 0.0"      (circleArea 0.0 == 0.0)
+
+  -- cylinderVolume checks
+  assertMsg "cylinderVolume 1.0 1.0 ≈ 3.14159" (cylinderVolume 1.0 1.0 == 3.14159)
+  assertMsg "cylinderVolume 0.0 5.0 = 0.0"      (cylinderVolume 0.0 5.0 == 0.0)
+
+  -- trianglePerimeter of 3-4-5 right triangle = 3 + 4 + 5 = 12
+  assertMsg "trianglePerimeter 3.0 4.0 = 12.0" (trianglePerimeter 3.0 4.0 == 12.0)

@@ -1,0 +1,66 @@
+-- Copyright (c) 2026 Damlers Contributors
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Exercise: Functions 3 — Guards
+--
+-- CONCEPT ─────────────────────────────────────────────────────────────────────
+-- Guards are an alternative to nested `if / then / else` for multi-branch
+-- functions. Each guard is a Boolean condition preceded by `|`.
+-- `otherwise` is a catch-all (it is just `True`).
+--
+--   bmi : Decimal -> Text
+--   bmi b
+--     | b < 18.5  = "Underweight"
+--     | b < 25.0  = "Normal"
+--     | b < 30.0  = "Overweight"
+--     | otherwise = "Obese"
+--
+-- Guards are checked top-to-bottom. The first `True` guard wins.
+-- DAML requires at least one guard to always match — use `otherwise` as the
+-- final case.
+--
+-- DOCS ────────────────────────────────────────────────────────────────────────
+-- https://docs.daml.com/daml/intro/2_DamlScript.html#guards
+--
+-- HINT ────────────────────────────────────────────────────────────────────────
+-- The guard conditions and their result strings are mismatched.
+-- Reorder the guards or their results so the function is correct.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+module Exercises.Functions.Ex3 where
+
+import Daml.Script
+
+-- TODO: The guard results are in the wrong order — fix them.
+classify : Int -> Text
+classify n
+  | n > 0     = "negative"   -- TODO: wrong result
+  | n < 0     = "positive"   -- TODO: wrong result
+  | otherwise = "non-zero"   -- TODO: wrong result
+
+-- TODO: Fill in the missing guard condition (replace ???).
+-- `letterGrade` should map a score (0–100) to a letter grade:
+--   90–100 → "A"
+--   80–89  → "B"
+--   70–79  → "C"
+--   60–69  → "D"
+--   below  → "F"
+letterGrade : Int -> Text
+letterGrade score
+  | score >= 90 = "A"
+  | score >= 80 = "B"
+  | score >= 70 = "C"
+  | score >= 60 = "D"
+  | ???         = "F"   -- TODO: replace ??? with the right condition
+
+functions3 : Script ()
+functions3 = script do
+  assertMsg "classify 5 = positive"  (classify 5    == "positive")
+  assertMsg "classify (-3) = negative" (classify (-3) == "negative")
+  assertMsg "classify 0 = zero"      (classify 0    == "zero")
+
+  assertMsg "grade 95 = A" (letterGrade 95 == "A")
+  assertMsg "grade 83 = B" (letterGrade 83 == "B")
+  assertMsg "grade 71 = C" (letterGrade 71 == "C")
+  assertMsg "grade 65 = D" (letterGrade 65 == "D")
+  assertMsg "grade 40 = F" (letterGrade 40 == "F")
