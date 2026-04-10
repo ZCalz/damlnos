@@ -1,0 +1,47 @@
+-- Choices 1 — Consuming Choices
+--
+-- A `choice` is an action that can be exercised on a contract.
+-- A consuming choice archives (deletes) the contract when exercised.
+--
+-- Fix the `Transfer` choice:
+--   1. The keyword `nonconsuming` should not be there — remove it so Transfer is consuming.
+--   2. The controller is `issuer` — change it to `owner` (only the owner may transfer).
+--   3. The choice body returns the same `owner` — it should return `newOwner`.
+
+module Exercises.Choices.Ex1 where
+
+import Daml.Script
+
+template Token
+  with
+    issuer : Party
+    owner  : Party
+    name   : Text
+  where
+    signatory issuer
+    observer  owner
+
+    nonconsuming choice Transfer : ContractId Token  -- BUG 1: remove nonconsuming
+      with newOwner : Party
+      controller issuer                              -- BUG 2: change to owner
+      do
+        create this with owner = owner              -- BUG 3: change to newOwner
+
+choices1 : Script ()
+choices1 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid  <- submit bank do createCmd Token with issuer = bank, owner = alice, name = "TokenA"
+  cid2 <- submit alice do exerciseCmd cid Transfer with newOwner = bob
+
+  -- Original contract must be archived
+  old <- queryContractId alice cid
+  assertMsg "original archived" (old == None)
+
+  -- New contract belongs to Bob
+  new <- queryContractId bob cid2
+  case new of
+    None   -> assertFail "new token not found"
+    Some t -> assertMsg "owner is Bob" (t.owner == bob)

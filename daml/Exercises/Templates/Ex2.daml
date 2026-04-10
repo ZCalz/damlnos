@@ -1,0 +1,40 @@
+-- Templates 2 — Signatory and Observer
+--
+-- A contract can have multiple signatories and observers.
+-- Signatories authorize creation; observers can see the contract.
+--
+-- Fix the template:
+--   1. `signatory` should list both `issuer` and `owner`: `signatory [issuer, owner]`
+--   2. `observer` should be `watcher`, not `owner`.
+
+module Exercises.Templates.Ex2 where
+
+import Daml.Script
+
+template Asset
+  with
+    issuer  : Party
+    owner   : Party
+    watcher : Party
+    name    : Text
+  where
+    signatory issuer          -- BUG: should be [issuer, owner]
+    observer  owner           -- BUG: should be watcher
+
+templates2 : Script ()
+templates2 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid <- submitMulti [bank, alice] [] do
+           createCmd Asset with
+             issuer  = bank
+             owner   = alice
+             watcher = bob
+             name    = "Gold"
+
+  asset <- queryContractId bob cid
+  case asset of
+    None   -> assertFail "Bob (watcher) should be able to see the asset"
+    Some a -> assertMsg "name is Gold" (a.name == "Gold")

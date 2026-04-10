@@ -1,0 +1,38 @@
+-- Templates 4 — Querying the Ledger
+--
+-- After creating a contract you can query it with `queryContractId`.
+-- You can also query all visible contracts of a type with `query`.
+--
+-- Fix the script so the assertions pass:
+--   1. `queryContractId alice cid` returns Some — bind it and read fields.
+--   2. `query @Note alice` returns a list with one element.
+--
+-- Bugs:
+--   - The field assertion compares m.content to "Wrong text" — fix the expected value.
+--   - `length notes == 0` is wrong — it should be 1.
+
+module Exercises.Templates.Ex4 where
+
+import Daml.Script
+
+template Note
+  with
+    author  : Party
+    content : Text
+  where
+    signatory author
+
+templates4 : Script ()
+templates4 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd Note with author = alice, content = "Buy milk"
+
+  -- Query by contract id
+  mn <- queryContractId alice cid
+  case mn of
+    None   -> assertFail "contract not found"
+    Some m -> assertMsg "content matches" (m.content == "Wrong text")  -- BUG
+
+  -- Query all Notes visible to alice
+  notes <- query @Note alice
+  assertMsg "one note exists" (length notes == 0)  -- BUG

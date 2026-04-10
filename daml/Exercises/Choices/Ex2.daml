@@ -1,0 +1,44 @@
+-- Choices 2 — Nonconsuming Choices
+--
+-- A `nonconsuming` choice does NOT archive the contract.
+-- It can be exercised multiple times.
+--
+-- Fix the `Ping` choice:
+--   1. It should be `nonconsuming` — add that keyword.
+--   2. The return type is `()` not `ContractId Counter`.
+--   3. The controller should be `anyone` (a choice parameter), not `owner`.
+
+module Exercises.Choices.Ex2 where
+
+import Daml.Script
+
+template Counter
+  with
+    owner : Party
+    count : Int
+  where
+    signatory owner
+
+    -- BUG 1: missing `nonconsuming`
+    choice Increment : ContractId Counter  -- BUG 2: should return ()
+      with anyone : Party
+      controller owner                     -- BUG 3: should be anyone
+      do
+        create this with count = count + 1
+
+choices2 : Script ()
+choices2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid <- submit alice do createCmd Counter with owner = alice, count = 0
+
+  -- Bob exercises Increment (nonconsuming, controlled by Bob)
+  submit bob do exerciseCmd cid Increment with anyone = bob
+  submit bob do exerciseCmd cid Increment with anyone = bob
+
+  -- Contract still alive, count unchanged (nonconsuming doesn't mutate state)
+  c <- queryContractId alice cid
+  case c of
+    None   -> assertFail "counter should still exist"
+    Some _ -> pure ()

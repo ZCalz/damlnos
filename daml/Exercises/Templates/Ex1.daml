@@ -1,0 +1,32 @@
+-- Templates 1 — Declaring a Template
+--
+-- A DAML template is like a class that lives on the ledger.
+-- Every template needs at least one `signatory`.
+--
+-- Fix the template below so the script passes.
+-- Bugs:
+--   1. The `signatory` field says `observer` — change it to `signatory`.
+--   2. The `Note` field `text` is missing — add `text : Text` to the `with` block.
+
+module Exercises.Templates.Ex1 where
+
+import Daml.Script
+
+template Memo
+  with
+    author : Party
+    -- BUG: field `text` is missing here
+  where
+    observer author   -- BUG: should be `signatory author`
+
+templates1 : Script ()
+templates1 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do
+              createCmd Memo with author = alice, text = "Hello, ledger!"
+  memo  <- queryContractId alice cid
+  case memo of
+    None    -> assertFail "contract not found"
+    Some m  -> do
+      assertMsg "author is Alice" (m.author == alice)
+      assertMsg "text is correct" (m.text   == "Hello, ledger!")
