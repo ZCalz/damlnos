@@ -1,0 +1,20 @@
+-- SOLUTION: Scripts 2
+-- 1. pure alice → allocateParty "Carol"
+-- 2. t1 /= t2 → t1 == t2
+
+module Solutions.Exercises.Scripts.Ex2 where
+
+import Daml.Script
+import DA.Time
+
+scripts2 : Script ()
+scripts2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+  carol <- allocateParty "Carol"
+
+  assertMsg "all distinct" (alice /= bob && bob /= carol && alice /= carol)
+
+  t1 <- getTime
+  t2 <- getTime
+  assertMsg "time does not change" (t1 == t2)

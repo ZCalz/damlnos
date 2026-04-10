@@ -1,0 +1,55 @@
+-- Choices 4 — Chaining Choices (create-then-exercise)
+--
+-- Choice bodies can create new contracts and exercise choices on them.
+-- Use `exerciseCmd` inside a `do` block to chain actions.
+--
+-- The `Split` choice should archive the original Token and
+-- create two new Tokens whose amounts sum to the original.
+--
+-- Bugs:
+--   1. `leftAmount` is computed as `amount - rightAmount` — correct.
+--      But the second createCmd uses `amount` instead of `rightAmount`.
+--   2. The `Split` choice is consuming but is declared `nonconsuming` — remove it.
+
+module Exercises.Choices.Ex4 where
+
+import Daml.Script
+
+template Token
+  with
+    issuer : Party
+    owner  : Party
+    amount : Decimal
+  where
+    signatory [issuer, owner]
+
+    nonconsuming choice Split : (ContractId Token, ContractId Token)  -- BUG 1: remove nonconsuming
+      with rightAmount : Decimal
+      controller owner
+      do
+        let leftAmount = amount - rightAmount
+        left  <- create this with amount = leftAmount
+        right <- create this with amount = amount   -- BUG 2: should be rightAmount
+        return (left, right)
+
+choices4 : Script ()
+choices4 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+
+  cid <- submitMulti [bank, alice] [] do
+           createCmd Token with issuer = bank, owner = alice, amount = 100.0
+
+  (l, r) <- submit alice do exerciseCmd cid Split with rightAmount = 30.0
+
+  lt <- queryContractId alice l
+  rt <- queryContractId alice r
+  case (lt, rt) of
+    (Some lv, Some rv) -> do
+      assertMsg "left  = 70" (lv.amount == 70.0)
+      assertMsg "right = 30" (rv.amount == 30.0)
+    _ -> assertFail "one of the split tokens not found"
+
+  -- Original must be archived
+  old <- queryContractId alice cid
+  assertMsg "original archived" (old == None)

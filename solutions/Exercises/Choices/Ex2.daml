@@ -1,0 +1,36 @@
+-- SOLUTION: Choices 2
+-- 1. Add `nonconsuming`
+-- 2. Return type: ContractId Counter → ()
+-- 3. controller owner → controller anyone
+
+module Solutions.Exercises.Choices.Ex2 where
+
+import Daml.Script
+
+template Counter
+  with
+    owner : Party
+    count : Int
+  where
+    signatory owner
+
+    nonconsuming choice Increment : ()
+      with anyone : Party
+      controller anyone
+      do
+        pure ()
+
+choices2 : Script ()
+choices2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid <- submit alice do createCmd Counter with owner = alice, count = 0
+
+  submit bob do exerciseCmd cid Increment with anyone = bob
+  submit bob do exerciseCmd cid Increment with anyone = bob
+
+  c <- queryContractId alice cid
+  case c of
+    None   -> assertFail "counter should still exist"
+    Some _ -> pure ()

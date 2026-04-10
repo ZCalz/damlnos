@@ -1,0 +1,45 @@
+-- SOLUTION: Choices 4
+-- 1. Remove `nonconsuming` from Split
+-- 2. amount = amount → amount = rightAmount
+
+module Solutions.Exercises.Choices.Ex4 where
+
+import Daml.Script
+
+template Token
+  with
+    issuer : Party
+    owner  : Party
+    amount : Decimal
+  where
+    signatory [issuer, owner]
+
+    choice Split : (ContractId Token, ContractId Token)
+      with rightAmount : Decimal
+      controller owner
+      do
+        let leftAmount = amount - rightAmount
+        left  <- create this with amount = leftAmount
+        right <- create this with amount = rightAmount
+        return (left, right)
+
+choices4 : Script ()
+choices4 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+
+  cid <- submitMulti [bank, alice] [] do
+           createCmd Token with issuer = bank, owner = alice, amount = 100.0
+
+  (l, r) <- submit alice do exerciseCmd cid Split with rightAmount = 30.0
+
+  lt <- queryContractId alice l
+  rt <- queryContractId alice r
+  case (lt, rt) of
+    (Some lv, Some rv) -> do
+      assertMsg "left  = 70" (lv.amount == 70.0)
+      assertMsg "right = 30" (rv.amount == 30.0)
+    _ -> assertFail "one of the split tokens not found"
+
+  old <- queryContractId alice cid
+  assertMsg "original archived" (old == None)

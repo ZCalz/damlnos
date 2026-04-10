@@ -1,0 +1,34 @@
+-- Scripts 1 — submit vs submitMustFail
+--
+-- `submit party do ...`           expects the transaction to succeed.
+-- `submitMustFail party do ...`   expects the transaction to be REJECTED.
+--
+-- Fix the script:
+--   1. The unauthorized create is expected to succeed — it should use `submitMustFail`.
+--   2. The authorized create uses `submitMustFail` — it should use `submit`.
+
+module Exercises.Scripts.Ex1 where
+
+import Daml.Script
+
+template Secret
+  with
+    owner : Party
+    msg   : Text
+  where
+    signatory owner
+
+scripts1 : Script ()
+scripts1 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  -- Alice creates her own secret — should SUCCEED
+  submitMustFail alice do   -- BUG: change to submit
+    createCmd Secret with owner = alice, msg = "Alice's secret"
+
+  -- Bob tries to create a secret on Alice's behalf — should FAIL
+  submit bob do             -- BUG: change to submitMustFail
+    createCmd Secret with owner = alice, msg = "forged"
+
+  pure ()

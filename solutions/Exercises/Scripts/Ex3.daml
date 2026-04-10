@@ -1,0 +1,32 @@
+-- SOLUTION: Scripts 3
+-- 1. [bank] → [bank, alice]
+-- 2. submit bank → submit alice
+
+module Solutions.Exercises.Scripts.Ex3 where
+
+import Daml.Script
+
+template Loan
+  with
+    lender   : Party
+    borrower : Party
+    amount   : Decimal
+  where
+    signatory [lender, borrower]
+
+    choice Repay : ()
+      controller borrower
+      do pure ()
+
+scripts3 : Script ()
+scripts3 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+
+  cid <- submitMulti [bank, alice] [] do
+           createCmd Loan with
+             lender   = bank
+             borrower = alice
+             amount   = 1000.0
+
+  submit alice do exerciseCmd cid Repay

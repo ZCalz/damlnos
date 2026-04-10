@@ -1,0 +1,40 @@
+-- SOLUTION: Choices 1
+-- 1. Remove `nonconsuming`
+-- 2. controller issuer → controller owner
+-- 3. owner = owner → owner = newOwner
+
+module Solutions.Exercises.Choices.Ex1 where
+
+import Daml.Script
+
+template Token
+  with
+    issuer : Party
+    owner  : Party
+    name   : Text
+  where
+    signatory issuer
+    observer  owner
+
+    choice Transfer : ContractId Token
+      with newOwner : Party
+      controller owner
+      do
+        create this with owner = newOwner
+
+choices1 : Script ()
+choices1 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid  <- submit bank do createCmd Token with issuer = bank, owner = alice, name = "TokenA"
+  cid2 <- submit alice do exerciseCmd cid Transfer with newOwner = bob
+
+  old <- queryContractId alice cid
+  assertMsg "original archived" (old == None)
+
+  new <- queryContractId bob cid2
+  case new of
+    None   -> assertFail "new token not found"
+    Some t -> assertMsg "owner is Bob" (t.owner == bob)

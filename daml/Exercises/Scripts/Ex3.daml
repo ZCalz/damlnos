@@ -1,0 +1,38 @@
+-- Scripts 3 — Multi-party Transactions
+--
+-- `submitMulti [p1, p2] [] do ...` submits a transaction authorized by both p1 and p2.
+-- The second list is the list of parties whose contracts may be read (read-as).
+--
+-- Fix the script:
+--   1. The `Loan` template requires both `lender` and `borrower` as signatories.
+--      The create is submitted with only `[lender]` — add `borrower` to the list.
+--   2. The `Repay` choice is exercised by `lender` — it should be exercised by `borrower`.
+
+module Exercises.Scripts.Ex3 where
+
+import Daml.Script
+
+template Loan
+  with
+    lender   : Party
+    borrower : Party
+    amount   : Decimal
+  where
+    signatory [lender, borrower]
+
+    choice Repay : ()
+      controller borrower
+      do pure ()
+
+scripts3 : Script ()
+scripts3 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+
+  cid <- submitMulti [bank] [] do          -- BUG 1: add alice to signer list
+           createCmd Loan with
+             lender   = bank
+             borrower = alice
+             amount   = 1000.0
+
+  submit bank do exerciseCmd cid Repay    -- BUG 2: change bank to alice

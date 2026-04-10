@@ -1,0 +1,26 @@
+-- SOLUTION: Templates 1
+-- 1. `observer author` → `signatory author`
+-- 2. Add `text : Text` field to the `with` block
+
+module Solutions.Exercises.Templates.Ex1 where
+
+import Daml.Script
+
+template Memo
+  with
+    author : Party
+    text   : Text
+  where
+    signatory author
+
+templates1 : Script ()
+templates1 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do
+              createCmd Memo with author = alice, text = "Hello, ledger!"
+  memo  <- queryContractId alice cid
+  case memo of
+    None    -> assertFail "contract not found"
+    Some m  -> do
+      assertMsg "author is Alice" (m.author == alice)
+      assertMsg "text is correct" (m.text   == "Hello, ledger!")

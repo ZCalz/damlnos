@@ -1,0 +1,38 @@
+-- SOLUTION: Choices 3
+-- 1. Add `nonconsuming` to GetBalance
+-- 2. return 0.0 → return balance
+
+module Solutions.Exercises.Choices.Ex3 where
+
+import Daml.Script
+
+template Account
+  with
+    owner   : Party
+    balance : Decimal
+  where
+    signatory owner
+
+    choice Deposit : ContractId Account
+      with amount : Decimal
+      controller owner
+      do
+        create this with balance = balance + amount
+
+    nonconsuming choice GetBalance : Decimal
+      controller owner
+      do
+        return balance
+
+choices3 : Script ()
+choices3 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd Account with owner = alice, balance = 100.0
+
+  cid2 <- submit alice do exerciseCmd cid Deposit with amount = 50.0
+  bal  <- submit alice do exerciseCmd cid2 GetBalance
+
+  assertMsg "balance is 150" (bal == 150.0)
+
+  acc <- queryContractId alice cid2
+  assertMsg "account still exists" (acc /= None)

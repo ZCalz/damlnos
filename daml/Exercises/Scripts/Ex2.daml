@@ -1,0 +1,30 @@
+-- Scripts 2 — allocateParty and getTime
+--
+-- `allocateParty "Name"` allocates a fresh party for use in scripts.
+-- `getTime` returns the current ledger time.
+--
+-- Fix the script:
+--   1. `carol` is set to `alice` — allocate a fresh party named "Carol" instead.
+--   2. `t1 == t2` is asserted but time should NOT change between two sequential
+--      `getTime` calls inside the same script block (ledger time is frozen).
+--      The assertion is wrong — change `t1 /= t2` to `t1 == t2`.
+--
+-- (In a Daml Script the ledger clock only advances when you explicitly use
+--  `setTime`. By default consecutive `getTime` calls return the same value.)
+
+module Exercises.Scripts.Ex2 where
+
+import Daml.Script
+import DA.Time
+
+scripts2 : Script ()
+scripts2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+  carol <- pure alice          -- BUG 1: replace with allocateParty "Carol"
+
+  assertMsg "all distinct" (alice /= bob && bob /= carol && alice /= carol)
+
+  t1 <- getTime
+  t2 <- getTime
+  assertMsg "time does not change" (t1 /= t2)  -- BUG 2: change /= to ==

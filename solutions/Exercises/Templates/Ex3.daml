@@ -1,0 +1,45 @@
+-- SOLUTION: Templates 3
+-- ensure True → ensure (amount > 0.0 && description /= "")
+
+module Solutions.Exercises.Templates.Ex3 where
+
+import Daml.Script
+
+template Invoice
+  with
+    issuer      : Party
+    payer       : Party
+    amount      : Decimal
+    description : Text
+  where
+    signatory issuer
+    observer  payer
+    ensure (amount > 0.0 && description /= "")
+
+templates3 : Script ()
+templates3 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  _cid <- submit alice do
+    createCmd Invoice with
+      issuer      = alice
+      payer       = bob
+      amount      = 100.0
+      description = "Consulting fee"
+
+  submitMustFail alice do
+    createCmd Invoice with
+      issuer      = alice
+      payer       = bob
+      amount      = 0.0
+      description = "Zero"
+
+  submitMustFail alice do
+    createCmd Invoice with
+      issuer      = alice
+      payer       = bob
+      amount      = 50.0
+      description = ""
+
+  pure ()

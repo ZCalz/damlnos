@@ -1,0 +1,27 @@
+-- SOLUTION: Templates 4
+-- "Wrong text" → "Buy milk"
+-- length notes == 0 → length notes == 1
+
+module Solutions.Exercises.Templates.Ex4 where
+
+import Daml.Script
+
+template Note
+  with
+    author  : Party
+    content : Text
+  where
+    signatory author
+
+templates4 : Script ()
+templates4 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd Note with author = alice, content = "Buy milk"
+
+  mn <- queryContractId alice cid
+  case mn of
+    None   -> assertFail "contract not found"
+    Some m -> assertMsg "content matches" (m.content == "Buy milk")
+
+  notes <- query @Note alice
+  assertMsg "one note exists" (length notes == 1)

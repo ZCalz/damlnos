@@ -1,0 +1,35 @@
+-- SOLUTION: Templates 2
+-- 1. signatory issuer → signatory [issuer, owner]
+-- 2. observer owner   → observer watcher
+
+module Solutions.Exercises.Templates.Ex2 where
+
+import Daml.Script
+
+template Asset
+  with
+    issuer  : Party
+    owner   : Party
+    watcher : Party
+    name    : Text
+  where
+    signatory [issuer, owner]
+    observer  watcher
+
+templates2 : Script ()
+templates2 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid <- submitMulti [bank, alice] [] do
+           createCmd Asset with
+             issuer  = bank
+             owner   = alice
+             watcher = bob
+             name    = "Gold"
+
+  asset <- queryContractId bob cid
+  case asset of
+    None   -> assertFail "Bob (watcher) should be able to see the asset"
+    Some a -> assertMsg "name is Gold" (a.name == "Gold")

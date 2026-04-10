@@ -1,0 +1,27 @@
+-- SOLUTION: Scripts 1
+-- submitMustFail alice → submit alice
+-- submit bob → submitMustFail bob
+
+module Solutions.Exercises.Scripts.Ex1 where
+
+import Daml.Script
+
+template Secret
+  with
+    owner : Party
+    msg   : Text
+  where
+    signatory owner
+
+scripts1 : Script ()
+scripts1 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  submit alice do
+    createCmd Secret with owner = alice, msg = "Alice's secret"
+
+  submitMustFail bob do
+    createCmd Secret with owner = alice, msg = "forged"
+
+  pure ()
