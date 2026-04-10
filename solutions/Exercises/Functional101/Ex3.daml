@@ -1,0 +1,27 @@
+-- SOLUTION: Functional101 3
+-- divideBy: d/x → flip (/) d x  (i.e., x/d)
+-- alwaysZero: \x→x → const 0
+-- countWhere: remove xs to make it point-free
+
+module Solutions.Exercises.Functional101.Ex3 where
+
+import Daml.Script
+
+divideBy : Decimal -> Decimal -> Decimal
+divideBy d = flip (/) d
+
+alwaysZero : Int -> Int
+alwaysZero = const 0
+
+countWhere : (a -> Bool) -> [a] -> Int
+countWhere p = length . filter p
+
+functional101_3 : Script ()
+functional101_3 = script do
+  assertMsg "divideBy 2.0 10.0 = 5.0"   (divideBy 2.0 10.0  == 5.0)
+  assertMsg "divideBy 4.0 100.0 = 25.0" (divideBy 4.0 100.0 == 25.0)
+  assertMsg "alwaysZero 1 = 0"   (alwaysZero 1   == 0)
+  assertMsg "alwaysZero 999 = 0" (alwaysZero 999 == 0)
+  assertMsg "map alwaysZero"     (map alwaysZero [1, 2, 3] == [0, 0, 0])
+  assertMsg "countWhere even [1..6] = 3" (countWhere even [1, 2, 3, 4, 5, 6] == 3)
+  assertMsg "countWhere (>3) [1..5] = 2" (countWhere (> 3) [1, 2, 3, 4, 5]   == 2)

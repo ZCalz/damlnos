@@ -1,0 +1,22 @@
+-- SOLUTION: Lists 1
+-- cons: xs :: 0  →  0 :: xs
+-- concat: ++  →  <>
+-- length: 99 → 3, null xs: True → False, null []: False → True
+
+module Solutions.Exercises.Lists.Ex1 where
+
+import Daml.Script
+
+lists1 : Script ()
+lists1 = script do
+  let xs = [1, 2, 3] : [Int]
+  let consed = 0 :: xs
+  assertMsg "cons makes [0,1,2,3]" (consed == [0, 1, 2, 3])
+  let combined = [10, 20] <> [30, 40]
+  assertMsg "concatenation" (combined == [10, 20, 30, 40])
+  assertMsg "length of xs"  (length xs == 3)
+  assertMsg "null of xs"    (null xs   == False)
+  assertMsg "null of empty" (null ([] : [Int]) == True)
+  assertMsg "head xs = 1"   (head xs == 1)
+  assertMsg "last xs = 3"   (last xs == 3)
+  assertMsg "reverse xs"    (reverse xs == [3, 2, 1])

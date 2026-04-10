@@ -1,0 +1,29 @@
+-- SOLUTION: Optional 1
+-- safeDivide: always Some → check b == 0.0, return None
+-- isSome/isNone: all flipped → corrected
+-- fromOptional: arguments swapped → fromOptional 0 present
+
+module Solutions.Exercises.Optional.Ex1 where
+
+import DA.Optional
+import Daml.Script
+
+safeDivide : Decimal -> Decimal -> Optional Decimal
+safeDivide x b
+  | b == 0.0  = None
+  | otherwise = Some (x / b)
+
+optional1 : Script ()
+optional1 = script do
+  assertMsg "10 / 2 = Some 5.0" (safeDivide 10.0 2.0 == Some 5.0)
+  assertMsg "10 / 0 = None"     (safeDivide 10.0 0.0 == None)
+  let present = Some 42 : Optional Int
+  let absent  = None    : Optional Int
+  assertMsg "isSome present" (isSome present == True)
+  assertMsg "isNone present" (isNone present == False)
+  assertMsg "isSome absent"  (isSome absent  == False)
+  assertMsg "isNone absent"  (isNone absent  == True)
+  let v1 = fromOptional 0 present
+  assertMsg "fromOptional present = 42" (v1 == 42)
+  let v2 = fromOptional 0 absent
+  assertMsg "fromOptional absent = 0"   (v2 == 0)

@@ -1,0 +1,34 @@
+-- SOLUTION: PatternMatching 4
+-- myHead: (x::rest) → rest  fixed to  (x::_) → x
+-- mySum: n * mySum rest  fixed to  n + mySum rest
+-- safeHead: Some(error)/None swapped → None / Some x
+
+module Solutions.Exercises.PatternMatching.Ex4 where
+
+import Daml.Script
+
+myHead : [a] -> a
+myHead xs = case xs of
+  (x::_) -> x
+  []     -> error "empty list"
+
+mySum : [Int] -> Int
+mySum xs = case xs of
+  []        -> 0
+  (n::rest) -> n + mySum rest
+
+safeHead : [a] -> Optional a
+safeHead xs = case xs of
+  []     -> None
+  (x::_) -> Some x
+
+patternMatching4 : Script ()
+patternMatching4 = script do
+  assertMsg "head [1,2,3] = 1" (myHead [1, 2, 3] == (1 : Int))
+  assertMsg "head [42] = 42"   (myHead [42]       == (42 : Int))
+  assertMsg "sum [] = 0"            (mySum []         == 0)
+  assertMsg "sum [1,2,3] = 6"      (mySum [1, 2, 3]  == 6)
+  assertMsg "sum [10,20] = 30"     (mySum [10, 20]   == 30)
+  assertMsg "safeHead [] = None"     (safeHead ([] : [Int]) == None)
+  assertMsg "safeHead [5] = Some 5"  (safeHead [5]          == Some 5)
+  assertMsg "safeHead [1,2] = Some 1" (safeHead [1, 2]      == Some 1)

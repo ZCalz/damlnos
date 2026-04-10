@@ -1,0 +1,21 @@
+-- SOLUTION: Lists 2
+-- doubled: +2 → *2
+-- squared: -x → x*x
+-- asText: show (-x) → show x
+-- gtThree: x < 3 → x > 3
+
+module Solutions.Exercises.Lists.Ex2 where
+
+import Daml.Script
+
+lists2 : Script ()
+lists2 = script do
+  let nums = [1, 2, 3, 4, 5] : [Int]
+  let doubled  = map (\x -> x * 2) nums
+  assertMsg "doubled" (doubled == [2, 4, 6, 8, 10])
+  let squared  = map (\x -> x * x) nums
+  assertMsg "squared" (squared == [1, 4, 9, 16, 25])
+  let asText   = map (\x -> show x) nums
+  assertMsg "asText" (asText == ["1", "2", "3", "4", "5"])
+  let gtThree  = map (\x -> x > 3) nums
+  assertMsg "gtThree" (gtThree == [False, False, False, True, True])

@@ -1,0 +1,33 @@
+-- SOLUTION: PatternMatching 2
+-- colorName: Red→"red", Blue→"blue"
+-- eval: Add→eval l + eval r, Neg→-(eval x)
+
+module Solutions.Exercises.PatternMatching.Ex2 where
+
+import Daml.Script
+
+data Color = Red | Green | Blue
+
+colorName : Color -> Text
+colorName c = case c of
+  Red   -> "red"
+  Green -> "green"
+  Blue  -> "blue"
+
+data Expr = Lit Int | Add Expr Expr | Neg Expr
+
+eval : Expr -> Int
+eval e = case e of
+  Lit n   -> n
+  Add l r -> eval l + eval r
+  Neg x   -> -(eval x)
+
+patternMatching2 : Script ()
+patternMatching2 = script do
+  assertMsg "Red is red"     (colorName Red   == "red")
+  assertMsg "Green is green" (colorName Green == "green")
+  assertMsg "Blue is blue"   (colorName Blue  == "blue")
+  assertMsg "Lit 5 = 5"           (eval (Lit 5)                    == 5)
+  assertMsg "Add 3 4 = 7"         (eval (Add (Lit 3) (Lit 4))      == 7)
+  assertMsg "Neg 6 = -6"          (eval (Neg (Lit 6))              == -6)
+  assertMsg "Neg(Add 1 2) = -3"   (eval (Neg (Add (Lit 1) (Lit 2))) == -3)

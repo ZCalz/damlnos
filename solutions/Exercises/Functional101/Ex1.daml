@@ -1,0 +1,20 @@
+-- SOLUTION: Functional101 1
+-- addOneThenDouble: (+1) . (*2) → (*2) . (+1)  (add 1 first, then double)
+-- pipeline: map (^2) → map (*2)
+
+module Solutions.Exercises.Functional101.Ex1 where
+
+import Daml.Script
+
+addOneThenDouble : Int -> Int
+addOneThenDouble = (*2) . (+1)
+
+pipeline : [Int] -> [Text]
+pipeline = map show . map (*2) . filter even
+
+functional101_1 : Script ()
+functional101_1 = script do
+  assertMsg "addOneThenDouble 3 = 8"  (addOneThenDouble 3  == 8)
+  assertMsg "addOneThenDouble 0 = 2"  (addOneThenDouble 0  == 2)
+  assertMsg "addOneThenDouble 9 = 20" (addOneThenDouble 9  == 20)
+  assertMsg "pipeline [1..6]" (pipeline [1, 2, 3, 4, 5, 6] == ["4", "8", "12"])

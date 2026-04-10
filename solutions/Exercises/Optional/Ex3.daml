@@ -1,0 +1,28 @@
+-- SOLUTION: Optional 3
+-- keepPositives: x < 0 → x > 0
+-- safeReciprocal: always Some → check x == 0.0
+-- catOptionals expected: [1,None,2,None,3] → [1,2,3]
+
+module Solutions.Exercises.Optional.Ex3 where
+
+import DA.Optional
+import Daml.Script
+
+keepPositives : [Int] -> [Int]
+keepPositives = mapOptional (\x -> if x > 0 then Some x else None)
+
+safeReciprocal : Decimal -> Optional Decimal
+safeReciprocal x
+  | x == 0.0  = None
+  | otherwise = Some (1.0 / x)
+
+optional3 : Script ()
+optional3 = script do
+  let mixed = [Some 1, None, Some 2, None, Some 3] : [Optional Int]
+  assertMsg "catOptionals" (catOptionals mixed == [1, 2, 3])
+  assertMsg "keepPositives [-1,2,-3,4]" (keepPositives [-1, 2, -3, 4] == [2, 4])
+  assertMsg "keepPositives all neg"     (keepPositives [-1, -2]        == [])
+  assertMsg "reciprocal 2.0 = Some 0.5" (safeReciprocal 2.0 == Some 0.5)
+  assertMsg "reciprocal 0.0 = None"     (safeReciprocal 0.0 == None)
+  let recips = mapOptional safeReciprocal [0.0, 2.0, 0.0, 4.0]
+  assertMsg "recips" (recips == [0.5, 0.25])

@@ -1,0 +1,17 @@
+-- SOLUTION: Functional101 2
+-- Style-only exercise: rewrite each let using $ instead of outer parens.
+
+module Solutions.Exercises.Functional101.Ex2 where
+
+import Daml.Script
+
+functional101_2 : Script ()
+functional101_2 = script do
+  let ex0 : Text = show $ (42 : Int)
+  assertMsg "show 42" (ex0 == "42")
+  let ex1 : [Int] = map (*2) $ ([1, 2, 3] : [Int])
+  assertMsg "map (*2)" (ex1 == [2, 4, 6])
+  let ex2 : [Int] = filter even $ map (*3) ([1, 2, 3, 4] : [Int])
+  assertMsg "filter even $ map (*3)" (ex2 == [6, 12])
+  let ex3 : Text = show $ length $ filter odd ([1, 2, 3, 4, 5] : [Int])
+  assertMsg "show $ length $ filter odd" (ex3 == "3")

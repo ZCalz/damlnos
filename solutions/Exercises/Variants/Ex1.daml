@@ -1,0 +1,33 @@
+-- SOLUTION: Variants 1
+-- opposite: each returns itself → return its opposite
+-- nextLight: all return Red → Red→Green, Green→Amber, Amber→Red
+
+module Solutions.Exercises.Variants.Ex1 where
+
+import Daml.Script
+
+data Direction = North | South | East | West deriving (Eq, Show)
+data TrafficLight = Red | Amber | Green       deriving (Eq, Show)
+
+opposite : Direction -> Direction
+opposite d = case d of
+  North -> South
+  South -> North
+  East  -> West
+  West  -> East
+
+nextLight : TrafficLight -> TrafficLight
+nextLight light = case light of
+  Red   -> Green
+  Green -> Amber
+  Amber -> Red
+
+variants1 : Script ()
+variants1 = script do
+  assertMsg "opposite North = South" (opposite North == South)
+  assertMsg "opposite South = North" (opposite South == North)
+  assertMsg "opposite East = West"   (opposite East  == West)
+  assertMsg "opposite West = East"   (opposite West  == East)
+  assertMsg "Red → Green"   (nextLight Red   == Green)
+  assertMsg "Green → Amber" (nextLight Green == Amber)
+  assertMsg "Amber → Red"   (nextLight Amber == Red)

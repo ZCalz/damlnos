@@ -1,0 +1,21 @@
+-- SOLUTION: Lists 4
+-- total: 100 → 0
+-- product': (+) → (*)
+-- maxVal: acc+x → max acc x, initial 0 → head nums
+-- reversed: acc <> [x] → x :: acc (or [x] <> acc)
+
+module Solutions.Exercises.Lists.Ex4 where
+
+import Daml.Script
+
+lists4 : Script ()
+lists4 = script do
+  let nums = [1, 2, 3, 4, 5] : [Int]
+  let total    = foldl (+) 0 nums
+  assertMsg "sum = 15" (total == 15)
+  let product' = foldl (*) 1 nums
+  assertMsg "product = 120" (product' == 120)
+  let maxVal   = foldl (\acc x -> if x > acc then x else acc) (head nums) nums
+  assertMsg "max = 5" (maxVal == 5)
+  let reversed = foldl (\acc x -> x :: acc) ([] : [Int]) nums
+  assertMsg "reversed = [5,4,3,2,1]" (reversed == [5, 4, 3, 2, 1])

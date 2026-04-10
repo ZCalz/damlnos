@@ -1,0 +1,32 @@
+-- SOLUTION: Variants 2
+-- Circle: r+r → 3.14159 * r * r
+-- Rectangle: w+h → w * h
+-- Triangle: b*h → 0.5 * b * h
+
+module Solutions.Exercises.Variants.Ex2 where
+
+import Daml.Script
+
+data Shape = Circle Decimal | Rectangle Decimal Decimal | Triangle Decimal Decimal
+  deriving (Eq, Show)
+
+area : Shape -> Decimal
+area s = case s of
+  Circle r      -> 3.14159 * r * r
+  Rectangle w h -> w * h
+  Triangle b h  -> 0.5 * b * h
+
+perimeter : Shape -> Optional Decimal
+perimeter s = case s of
+  Circle r      -> Some (2.0 * 3.14159 * r)
+  Rectangle w h -> Some (2.0 * (w + h))
+  Triangle _ _  -> None
+
+variants2 : Script ()
+variants2 = script do
+  assertMsg "circle area r=1"       (area (Circle 1.0)         == 3.14159)
+  assertMsg "rectangle area 3x4"    (area (Rectangle 3.0 4.0)  == 12.0)
+  assertMsg "triangle area b=6 h=4" (area (Triangle 6.0 4.0)   == 12.0)
+  assertMsg "circle perimeter"    (perimeter (Circle 1.0)        == Some 6.28318)
+  assertMsg "rectangle perimeter" (perimeter (Rectangle 3.0 4.0) == Some 14.0)
+  assertMsg "triangle perimeter"  (perimeter (Triangle 3.0 4.0)  == None)

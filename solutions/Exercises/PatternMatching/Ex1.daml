@@ -1,0 +1,28 @@
+-- SOLUTION: PatternMatching 1
+-- describeSign: EQ→"zero", GT→"positive", LT→"negative"
+-- describeList: [_]→"exactly one element", _→"more than one element"
+
+module Solutions.Exercises.PatternMatching.Ex1 where
+
+import Daml.Script
+
+describeSign : Int -> Text
+describeSign n = case n `compare` 0 of
+  EQ -> "zero"
+  GT -> "positive"
+  LT -> "negative"
+
+describeList : [a] -> Text
+describeList xs = case xs of
+  []  -> "empty"
+  [_] -> "exactly one element"
+  _   -> "more than one element"
+
+patternMatching1 : Script ()
+patternMatching1 = script do
+  assertMsg "sign of 5 is positive"  (describeSign 5    == "positive")
+  assertMsg "sign of -3 is negative" (describeSign (-3) == "negative")
+  assertMsg "sign of 0 is zero"      (describeSign 0    == "zero")
+  assertMsg "empty list"    (describeList ([] : [Int]) == "empty")
+  assertMsg "one element"   (describeList [42]         == "exactly one element")
+  assertMsg "many elements" (describeList [1, 2, 3]    == "more than one element")

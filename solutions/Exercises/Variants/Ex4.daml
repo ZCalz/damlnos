@@ -1,0 +1,37 @@
+-- SOLUTION: Variants 4
+-- paymentAmount: bt.iban→bt.amount, cp.last4→cp.amount
+-- describe: BankTransfer/CardPayment descriptions swapped
+
+module Solutions.Exercises.Variants.Ex4 where
+
+import Daml.Script
+
+data Payment
+  = BankTransfer with iban : Text; amount : Decimal
+  | CardPayment  with last4 : Text; amount : Decimal
+  | Cash         with amount : Decimal
+    deriving (Eq, Show)
+
+paymentAmount : Payment -> Decimal
+paymentAmount p = case p of
+  BankTransfer bt -> bt.amount
+  CardPayment  cp -> cp.amount
+  Cash         c  -> c.amount
+
+describe : Payment -> Text
+describe p = case p of
+  BankTransfer bt -> "Bank transfer to " <> bt.iban
+  CardPayment  cp -> "Card ending " <> cp.last4
+  Cash         _  -> "Cash payment"
+
+variants4 : Script ()
+variants4 = script do
+  let bt = BankTransfer with iban = "GB33BUKB20201555555555"; amount = 500.0
+  let cp = CardPayment  with last4 = "4242"; amount = 99.99
+  let ca = Cash         with amount = 20.0
+  assertMsg "bt amount = 500"   (paymentAmount bt == 500.0)
+  assertMsg "cp amount = 99.99" (paymentAmount cp == 99.99)
+  assertMsg "cash amount = 20"  (paymentAmount ca == 20.0)
+  assertMsg "bt describe" (describe bt == "Bank transfer to GB33BUKB20201555555555")
+  assertMsg "cp describe" (describe cp == "Card ending 4242")
+  assertMsg "ca describe" (describe ca == "Cash payment")

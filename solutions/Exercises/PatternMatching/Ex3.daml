@@ -1,0 +1,37 @@
+-- SOLUTION: PatternMatching 3
+-- myFst: (_, y) → y  fixed to  (x, _) → x
+-- mySnd: (x, _) → x  fixed to  (_, y) → y
+-- classify2D: Q1→Q1, Q2→Q2, Q3→Q3, Q4→Q4
+
+module Solutions.Exercises.PatternMatching.Ex3 where
+
+import Daml.Script
+
+myFst : (a, b) -> a
+myFst pair = case pair of
+  (x, _) -> x
+
+mySnd : (a, b) -> b
+mySnd pair = case pair of
+  (_, y) -> y
+
+classify2D : (Decimal, Decimal) -> Text
+classify2D point = case point of
+  (0.0, 0.0) -> "origin"
+  (x, y)
+    | x > 0.0 && y > 0.0 -> "Q1"
+    | x < 0.0 && y > 0.0 -> "Q2"
+    | x < 0.0 && y < 0.0 -> "Q3"
+    | otherwise           -> "Q4"
+
+patternMatching3 : Script ()
+patternMatching3 = script do
+  assertMsg "fst (1,2) = 1"       (myFst (1, 2)     == (1 : Int))
+  assertMsg "fst (True,0) = True" (myFst (True, 0)  == True)
+  assertMsg "snd (1,2) = 2"       (mySnd (1, 2)     == (2 : Int))
+  assertMsg "snd (a,b) = b"       (mySnd ("a","b")  == "b")
+  assertMsg "origin"   (classify2D (0.0,  0.0)  == "origin")
+  assertMsg "Q1 (+,+)" (classify2D (1.0,  1.0)  == "Q1")
+  assertMsg "Q2 (-,+)" (classify2D (-1.0, 1.0)  == "Q2")
+  assertMsg "Q3 (-,-)" (classify2D (-1.0, -1.0) == "Q3")
+  assertMsg "Q4 (+,-)" (classify2D (1.0,  -1.0) == "Q4")
