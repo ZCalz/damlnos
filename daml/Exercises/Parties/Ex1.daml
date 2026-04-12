@@ -1,0 +1,34 @@
+-- Parties 1 — Visibility and Privacy
+--
+-- In DAML, a party can only see contracts where it is a stakeholder
+-- (signatory or observer). Other parties get None from queryContractId.
+--
+-- Fix the visibility assertions:
+--   1. Bob is NOT a stakeholder on Alice's Note — he should get None.
+--      Change `bob_view /= None` to `bob_view == None`.
+--   2. Alice IS the signatory — she should see it.
+--      Change `alice_view == None` to `alice_view /= None`.
+
+module Exercises.Parties.Ex1 where
+
+import Daml.Script
+
+template Note
+  with
+    owner : Party
+    msg   : Text
+  where
+    signatory owner
+
+parties1 : Script ()
+parties1 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid <- submit alice do createCmd Note with owner = alice, msg = "Private"
+
+  alice_view <- queryContractId alice cid
+  bob_view   <- queryContractId bob   cid
+
+  assertMsg "Alice can see her note" (alice_view == None)  -- BUG 1
+  assertMsg "Bob cannot see it"      (bob_view   /= None)  -- BUG 2

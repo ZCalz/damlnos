@@ -1,0 +1,26 @@
+-- SOLUTION: Parties 2
+-- observer owner → observer reader
+
+module Solutions.Exercises.Parties.Ex2 where
+
+import Daml.Script
+
+template SharedNote
+  with
+    owner  : Party
+    reader : Party
+    msg    : Text
+  where
+    signatory owner
+    observer  reader
+
+parties2 : Script ()
+parties2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid <- submit alice do
+           createCmd SharedNote with owner = alice, reader = bob, msg = "Hello Bob"
+
+  reader_view <- queryContractId bob cid
+  assertMsg "Bob can read the note" (reader_view /= None)

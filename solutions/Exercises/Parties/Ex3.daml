@@ -1,0 +1,44 @@
+-- SOLUTION: Parties 3
+-- 1. otherCid → secretCid
+-- 2. return () → return s
+
+module Solutions.Exercises.Parties.Ex3 where
+
+import Daml.Script
+
+template Secret
+  with
+    owner   : Party
+    payload : Text
+  where
+    signatory owner
+
+template Peeker
+  with
+    owner : Party
+  where
+    signatory owner
+
+    nonconsuming choice Peek : Secret
+      with secretCid : ContractId Secret
+      controller owner
+      do
+        s <- fetch secretCid
+        return s
+
+parties3 : Script ()
+parties3 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  secretCid <- submit alice do
+                 createCmd Secret with owner = alice, payload = "top secret"
+
+  peekerCid <- submit bob do
+                 createCmd Peeker with owner = bob
+
+  alicePeeker <- submit alice do createCmd Peeker with owner = alice
+
+  s <- submit alice do exerciseCmd alicePeeker Peek with secretCid
+
+  assertMsg "payload correct" (s.payload == "top secret")

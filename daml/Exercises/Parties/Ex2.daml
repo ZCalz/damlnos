@@ -1,0 +1,32 @@
+-- Parties 2 — Adding an Observer
+--
+-- Adding a party as `observer` lets them see the contract without
+-- granting them signing authority.
+--
+-- Fix the template so the `reader` can see the contract:
+--   The `observer` line currently observes `owner` (who is already a signatory
+--   and has visibility). Change `observer owner` to `observer reader`.
+
+module Exercises.Parties.Ex2 where
+
+import Daml.Script
+
+template SharedNote
+  with
+    owner  : Party
+    reader : Party
+    msg    : Text
+  where
+    signatory owner
+    observer  owner   -- BUG: should be `observer reader`
+
+parties2 : Script ()
+parties2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  cid <- submit alice do
+           createCmd SharedNote with owner = alice, reader = bob, msg = "Hello Bob"
+
+  reader_view <- queryContractId bob cid
+  assertMsg "Bob can read the note" (reader_view /= None)

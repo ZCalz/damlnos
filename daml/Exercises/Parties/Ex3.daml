@@ -1,0 +1,55 @@
+-- Parties 3 — Divulgence via Exercise
+--
+-- When party B exercises a choice on a contract that fetches another contract,
+-- B learns the payload of the fetched contract (divulgence).
+-- After divulgence, B can query the divulged contract.
+--
+-- The `Peek` choice below fetches the `Secret` contract so the caller can read it.
+-- Fix the choice:
+--   1. The `fetch` call uses `otherCid` as a parameter name but the choice argument
+--      is named `secretCid` — change `otherCid` to `secretCid`.
+--   2. The choice returns `()` instead of the secret payload — change to `return s`.
+
+module Exercises.Parties.Ex3 where
+
+import Daml.Script
+
+template Secret
+  with
+    owner   : Party
+    payload : Text
+  where
+    signatory owner
+
+template Peeker
+  with
+    owner : Party
+  where
+    signatory owner
+
+    nonconsuming choice Peek : Secret
+      with secretCid : ContractId Secret
+      controller owner
+      do
+        s <- fetch otherCid   -- BUG 1: otherCid → secretCid
+        return ()              -- BUG 2: () → s
+
+parties3 : Script ()
+parties3 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  secretCid <- submit alice do
+                 createCmd Secret with owner = alice, payload = "top secret"
+
+  peekerCid <- submit bob do
+                 createCmd Peeker with owner = bob
+
+  -- Bob peeks at Alice's secret (Alice must authorize by adding Bob as observer or via divulgence)
+  -- For simplicity, Alice adds Bob as observer on Secret after the fact:
+  -- We test the Peek logic with alice as the peeker owner
+  alicePeeker <- submit alice do createCmd Peeker with owner = alice
+
+  s <- submit alice do exerciseCmd alicePeeker Peek with secretCid
+
+  assertMsg "payload correct" (s.payload == "top secret")
