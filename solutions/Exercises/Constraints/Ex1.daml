@@ -1,0 +1,33 @@
+-- SOLUTION: Constraints 1
+-- amount <= 0.0 → amount > 0.0
+
+module Solutions.Exercises.Constraints.Ex1 where
+
+import Daml.Script
+
+template BankAccount
+  with
+    owner   : Party
+    balance : Decimal
+  where
+    signatory owner
+
+    choice Withdraw : ContractId BankAccount
+      with amount : Decimal
+      controller owner
+      do
+        assertMsg "amount must be positive" (amount > 0.0)
+        assertMsg "sufficient funds"        (amount <= balance)
+        create this with balance = balance - amount
+
+constraints1 : Script ()
+constraints1 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd BankAccount with owner = alice, balance = 200.0
+
+  cid2 <- submit alice do exerciseCmd cid Withdraw with amount = 50.0
+
+  submitMustFail alice do exerciseCmd cid2 Withdraw with amount = -10.0
+  submitMustFail alice do exerciseCmd cid2 Withdraw with amount = 999.0
+
+  pure ()

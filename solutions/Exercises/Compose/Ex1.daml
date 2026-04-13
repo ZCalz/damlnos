@@ -1,0 +1,59 @@
+-- SOLUTION: Compose 1
+-- newOwner = owner2 → newOwner = owner1 (for second token transfer)
+
+module Solutions.Exercises.Compose.Ex1 where
+
+import Daml.Script
+
+template Token
+  with
+    issuer : Party
+    owner  : Party
+    name   : Text
+  where
+    signatory issuer
+    observer  owner
+
+    choice Transfer : ContractId Token
+      with newOwner : Party
+      controller owner
+      do create this with owner = newOwner
+
+template SwapProposal
+  with
+    owner1 : Party
+    cid1   : ContractId Token
+    owner2 : Party
+    cid2   : ContractId Token
+  where
+    signatory owner1
+    observer  owner2
+
+    choice ExecuteSwap : (ContractId Token, ContractId Token)
+      controller owner2
+      do
+        t1 <- exercise cid1 Transfer with newOwner = owner2
+        t2 <- exercise cid2 Transfer with newOwner = owner1
+        return (t1, t2)
+
+compose1 : Script ()
+compose1 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  a <- submit bank do createCmd Token with issuer = bank, owner = alice, name = "Apple"
+  b <- submit bank do createCmd Token with issuer = bank, owner = bob,   name = "Banana"
+
+  prop <- submit alice do
+            createCmd SwapProposal with owner1 = alice, cid1 = a, owner2 = bob, cid2 = b
+
+  (t1, t2) <- submit bob do exerciseCmd prop ExecuteSwap
+
+  tok1 <- queryContractId bob t1
+  tok2 <- queryContractId alice t2
+  case (tok1, tok2) of
+    (Some v1, Some v2) -> do
+      assertMsg "Bob gets Apple"    (v1.name == "Apple"  && v1.owner == bob)
+      assertMsg "Alice gets Banana" (v2.name == "Banana" && v2.owner == alice)
+    _ -> assertFail "tokens not found after swap"

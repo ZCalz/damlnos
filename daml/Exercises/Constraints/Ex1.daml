@@ -1,0 +1,48 @@
+-- Constraints 1 — assert inside a Choice
+--
+-- Use `assert` (or `assertMsg`) inside a choice body to enforce
+-- business rules at exercise time.
+--
+-- Fix the `Withdraw` choice:
+--   1. The guard condition is `amount <= 0.0` — it should fail when
+--      the amount is negative or zero. Change to `amount > 0.0`.
+--   2. The second assert checks `amount <= balance` — it should check
+--      `amount <= balance` (this one is correct — fix the first one only).
+--
+-- Wait, re-read: Bug is only in the first assert condition:
+--   `assertMsg "positive" (amount <= 0.0)` → `assertMsg "positive" (amount > 0.0)`
+
+module Exercises.Constraints.Ex1 where
+
+import Daml.Script
+
+template BankAccount
+  with
+    owner   : Party
+    balance : Decimal
+  where
+    signatory owner
+
+    choice Withdraw : ContractId BankAccount
+      with amount : Decimal
+      controller owner
+      do
+        assertMsg "amount must be positive" (amount <= 0.0)  -- BUG: should be > 0.0
+        assertMsg "sufficient funds"        (amount <= balance)
+        create this with balance = balance - amount
+
+constraints1 : Script ()
+constraints1 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd BankAccount with owner = alice, balance = 200.0
+
+  -- Valid withdrawal
+  cid2 <- submit alice do exerciseCmd cid Withdraw with amount = 50.0
+
+  -- Negative amount must fail
+  submitMustFail alice do exerciseCmd cid2 Withdraw with amount = -10.0
+
+  -- Overdraft must fail
+  submitMustFail alice do exerciseCmd cid2 Withdraw with amount = 999.0
+
+  pure ()

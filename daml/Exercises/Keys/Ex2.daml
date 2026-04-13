@@ -1,0 +1,44 @@
+-- Keys 2 — exerciseByKey
+--
+-- `exerciseByKey @T key ChoiceName with ...` exercises a choice
+-- on a contract identified by key rather than contract id.
+--
+-- Fix the `Rename` choice and the script:
+--   1. The choice controller is `maintainer` — there is no field named `maintainer`.
+--      Change the controller to `owner`.
+--   2. The script calls `exerciseByKey @Registry alice "Alice" Rename with ...`
+--      but the key type is `(Party, Text)` (owner, username pair).
+--      Change the key argument to `(alice, "Alice")`.
+
+module Exercises.Keys.Ex2 where
+
+import Daml.Script
+
+template Registry
+  with
+    owner    : Party
+    username : Text
+    bio      : Text
+  where
+    signatory owner
+    key       (owner, username) : (Party, Text)
+    maintainer key._1
+
+    choice Rename : ContractId Registry
+      with newName : Text
+      controller maintainer  -- BUG 1: should be owner
+      do
+        create this with username = newName
+
+keys2 : Script ()
+keys2 = script do
+  alice <- allocateParty "Alice"
+
+  submit alice do
+    createCmd Registry with owner = alice, username = "Alice", bio = "Hello!"
+
+  submit alice do
+    exerciseByKey @Registry "Alice" Rename with newName = "AliceNew"  -- BUG 2: key should be (alice, "Alice")
+
+  res <- queryContractKey @Registry alice (alice, "AliceNew")
+  assertMsg "renamed" (res /= None)

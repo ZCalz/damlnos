@@ -1,0 +1,55 @@
+-- Constraints 2 — abortMsg
+--
+-- `abortMsg "reason"` unconditionally fails a transaction with a message.
+-- Combine it with `if` to create conditional failures.
+--
+-- Fix the `Ship` choice:
+--   1. The status check uses `==` instead of `/=` — an order can only ship
+--      when its status is NOT "Pending". Change to `status /= "Pending"`.
+--      Wait — that's backwards. Shipping is only valid when status IS "Pending".
+--      The abort fires when `status /= "Pending"`. Current bug: `status == "Pending"`.
+--   2. The new status after shipping says `"Pending"` — change it to `"Shipped"`.
+
+module Exercises.Constraints.Ex2 where
+
+import Daml.Script
+
+template Order
+  with
+    seller : Party
+    buyer  : Party
+    item   : Text
+    status : Text
+  where
+    signatory seller
+    observer  buyer
+
+    choice Ship : ContractId Order
+      controller seller
+      do
+        if status == "Pending"  -- BUG 1: should be /=
+          then abortMsg "Order is not in Pending state"
+          else create this with status = "Pending"  -- BUG 2: should be "Shipped"
+
+constraints2 : Script ()
+constraints2 = script do
+  seller <- allocateParty "Seller"
+  buyer  <- allocateParty "Buyer"
+
+  cid <- submit seller do
+           createCmd Order with
+             seller = seller
+             buyer  = buyer
+             item   = "Widget"
+             status = "Pending"
+
+  -- Ship the order
+  cid2 <- submit seller do exerciseCmd cid Ship
+
+  o <- queryContractId seller cid2
+  case o of
+    None   -> assertFail "order not found"
+    Some v -> assertMsg "status is Shipped" (v.status == "Shipped")
+
+  -- Shipping again must fail (already Shipped, not Pending)
+  submitMustFail seller do exerciseCmd cid2 Ship

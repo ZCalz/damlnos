@@ -1,0 +1,45 @@
+-- SOLUTION: Constraints 2
+-- 1. status == "Pending" → status /= "Pending"
+-- 2. "Pending" → "Shipped"
+
+module Solutions.Exercises.Constraints.Ex2 where
+
+import Daml.Script
+
+template Order
+  with
+    seller : Party
+    buyer  : Party
+    item   : Text
+    status : Text
+  where
+    signatory seller
+    observer  buyer
+
+    choice Ship : ContractId Order
+      controller seller
+      do
+        if status /= "Pending"
+          then abortMsg "Order is not in Pending state"
+          else create this with status = "Shipped"
+
+constraints2 : Script ()
+constraints2 = script do
+  seller <- allocateParty "Seller"
+  buyer  <- allocateParty "Buyer"
+
+  cid <- submit seller do
+           createCmd Order with
+             seller = seller
+             buyer  = buyer
+             item   = "Widget"
+             status = "Pending"
+
+  cid2 <- submit seller do exerciseCmd cid Ship
+
+  o <- queryContractId seller cid2
+  case o of
+    None   -> assertFail "order not found"
+    Some v -> assertMsg "status is Shipped" (v.status == "Shipped")
+
+  submitMustFail seller do exerciseCmd cid2 Ship

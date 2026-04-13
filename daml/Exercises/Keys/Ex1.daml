@@ -1,0 +1,39 @@
+-- Keys 1 — Contract Keys
+--
+-- `key` gives a contract a stable, unique identifier on the ledger.
+-- `maintainer` names the party responsible for key uniqueness.
+-- `fetchByKey @T k` / `queryContractKey @T party k` look up by key.
+--
+-- Fix the template:
+--   1. Change `key owner` to `key (owner, code)` so two badges with the same
+--      owner but different codes are both allowed.
+--   2. Change `maintainer key` to `maintainer key._1` because the key is now
+--      a tuple and the maintainer must be a Party (first element of the tuple).
+
+module Exercises.Keys.Ex1 where
+
+import Daml.Script
+
+template Badge
+  with
+    owner : Party
+    code  : Text
+    label : Text
+  where
+    signatory owner
+    key       owner         : Party          -- BUG 1: key (owner, code) : (Party, Text)
+    maintainer key                           -- BUG 2: maintainer key._1
+
+keys1 : Script ()
+keys1 = script do
+  alice <- allocateParty "Alice"
+
+  submit alice do
+    createCmd Badge with owner = alice, code = "VIP", label = "Very Important Person"
+  submit alice do
+    createCmd Badge with owner = alice, code = "GOLD", label = "Gold Member"
+
+  res <- queryContractKey @Badge alice (alice, "VIP")
+  case res of
+    None      -> assertFail "VIP badge not found"
+    Some (_, b) -> assertMsg "label correct" (b.label == "Very Important Person")
