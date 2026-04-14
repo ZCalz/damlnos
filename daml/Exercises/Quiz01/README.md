@@ -1,20 +1,28 @@
 # Quiz 01 — Bank Account
 
-> **Coming soon** — quiz not yet written.
-
 ## When to attempt
 
 Complete modules **00 Intro** through **08 Functional 101** before attempting this quiz.
 
-## Scenario
+## Rules
 
-You will build a simple bank account system from scratch:
+No hints. No bug comments. Just a specification and a set of assertions to satisfy.
 
-- A `BankAccount` record holding owner, account number, and balance
-- Functions to deposit, withdraw, and check balance
-- A variant `TransactionType` with `Deposit`, `Withdrawal`, and `Transfer`
-- A `Transaction` record pairing an amount with a `TransactionType`
-- A function `applyTransactions : BankAccount -> [Transaction] -> BankAccount`
-- Script tests that verify the resulting balances
+## Specification
 
-No hints. No TODOs. Just a specification and a set of assertions to satisfy.
+Open `Quiz01.daml`. The type definitions are already there:
+
+- `BankAccount` — record with `owner : Party`, `acctNum : Text`, `balance : Decimal`
+- `TransactionType` — variant: `Deposit | Withdrawal | Transfer { recipient : Text }`
+- `Transaction` — record with `amount : Decimal` and `txType : TransactionType`
+
+The function stubs compile but return wrong results. Implement them correctly:
+
+| Function | Type | Description |
+|---|---|---|
+| `deposit` | `Decimal -> BankAccount -> BankAccount` | Add to balance |
+| `withdraw` | `Decimal -> BankAccount -> BankAccount` | Subtract from balance |
+| `getBalance` | `BankAccount -> Decimal` | Return current balance |
+| `applyTransactions` | `BankAccount -> [Transaction] -> BankAccount` | Apply each transaction in order; `Transfer` subtracts like a withdrawal |
+
+The `quiz01` script asserts the expected balances. All four assertions must pass.

@@ -1,0 +1,84 @@
+-- Quiz 01 — Bank Account
+--
+-- Build a simple bank account system from scratch.
+-- The type definitions are provided.
+-- The function stubs compile but produce wrong results.
+-- Make every assertion in quiz01 pass.
+--
+-- There are no hints.
+
+module Exercises.Quiz01.Quiz01 where
+
+import Daml.Script
+
+-- A bank account for a single party.
+data BankAccount = BankAccount
+  with
+    owner   : Party
+    acctNum : Text
+    balance : Decimal
+  deriving (Eq, Show)
+
+-- The three kinds of transaction that can affect a balance.
+data TransactionType
+  = Deposit
+  | Withdrawal
+  | Transfer with recipient : Text
+  deriving (Eq, Show)
+
+-- A transaction pairs an amount with a transaction type.
+data Transaction = Transaction
+  with
+    amount : Decimal
+    txType : TransactionType
+  deriving (Eq, Show)
+
+-- Add `amt` to the account's balance.
+deposit : Decimal -> BankAccount -> BankAccount
+deposit amt acct = acct  -- wrong: balance is unchanged
+
+-- Subtract `amt` from the account's balance.
+withdraw : Decimal -> BankAccount -> BankAccount
+withdraw amt acct = acct  -- wrong: balance is unchanged
+
+-- Return the current balance.
+getBalance : BankAccount -> Decimal
+getBalance acct = 0.0  -- wrong: always returns zero
+
+-- Apply a list of transactions in order.
+-- Deposit adds, Withdrawal subtracts, Transfer subtracts.
+applyTransactions : BankAccount -> [Transaction] -> BankAccount
+applyTransactions acct [] = acct
+applyTransactions acct (t :: ts) =
+  applyTransactions acct ts  -- wrong: transaction t is ignored
+
+quiz01 : Script ()
+quiz01 = script do
+  alice <- allocateParty "Alice"
+
+  let acct = BankAccount with
+        owner   = alice
+        acctNum = "ACC-001"
+        balance = 1000.0
+
+  -- Single deposit
+  let acct1 = deposit 500.0 acct
+  assertMsg "balance after deposit"    (getBalance acct1 == 1500.0)
+
+  -- Single withdrawal
+  let acct2 = withdraw 200.0 acct1
+  assertMsg "balance after withdrawal" (getBalance acct2 == 1300.0)
+
+  -- applyTransactions: deposit 100, withdraw 50, transfer 25
+  let txs =
+        [ Transaction with amount = 100.0, txType = Deposit
+        , Transaction with amount = 50.0,  txType = Withdrawal
+        , Transaction with amount = 25.0,  txType = Transfer with recipient = "Bob"
+        ]
+  let acct3 = applyTransactions acct2 txs
+  assertMsg "balance after transactions" (getBalance acct3 == 1325.0)
+
+  -- A fresh account with a zero-balance run gives zero
+  let zero = BankAccount with owner = alice, acctNum = "ACC-002", balance = 0.0
+  let acct4 = applyTransactions zero []
+  assertMsg "empty transaction list" (getBalance acct4 == 0.0)

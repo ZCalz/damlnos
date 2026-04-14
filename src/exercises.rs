@@ -262,6 +262,14 @@ pub const EXERCISES: &[Exercise] = &[
         hint: "divideBy: `flip (/) d`. alwaysZero: `const 0`. countWhere: `length . filter p` (drop xs).",
         section: "08 · Functional101",
     },
+    // ── Quiz 01 ─────────────────────────────────────────────────────────────
+    Exercise {
+        slug: "quiz1",
+        name: "Quiz 01 — Bank Account",
+        file: "daml/Exercises/Quiz01/Quiz01.daml",
+        hint: "There are no hints for quiz exercises. Read the failing test output and the type definitions in the file.",
+        section: "Quiz 01 · Bank Account",
+    },
     // ── 09 Templates ────────────────────────────────────────────────────────
     Exercise {
         slug: "templates1",
@@ -379,6 +387,14 @@ pub const EXERCISES: &[Exercise] = &[
         hint: "Guard: `status == \"Pending\"` → `status /= \"Pending\"`. New status: `\"Pending\"` → `\"Shipped\"`.",
         section: "13 · Constraints",
     },
+    // ── Quiz 02 ─────────────────────────────────────────────────────────────
+    Exercise {
+        slug: "quiz2",
+        name: "Quiz 02 — IOU Contract",
+        file: "daml/Exercises/Quiz02/Quiz02.daml",
+        hint: "There are no hints for quiz exercises. Read the failing test output and the template definitions in the file.",
+        section: "Quiz 02 · IOU Contract",
+    },
     // ── 14 Keys ─────────────────────────────────────────────────────────────
     Exercise {
         slug: "keys1",
@@ -439,6 +455,14 @@ pub const EXERCISES: &[Exercise] = &[
         file: "daml/Exercises/Exceptions/Ex1.daml",
         hint: "Add `deriving Show` to InsufficientFunds. Flip guard: `amount <= balance` → `amount > balance`.",
         section: "18 · Exceptions",
+    },
+    // ── Quiz 03 ─────────────────────────────────────────────────────────────
+    Exercise {
+        slug: "quiz3",
+        name: "Quiz 03 — Token Swap with Interface",
+        file: "daml/Exercises/Quiz03/Quiz03.daml",
+        hint: "There are no hints for quiz exercises. Read the failing test output and the interface/template definitions in the file.",
+        section: "Quiz 03 · Token Swap",
     },
 ];
 

@@ -1,20 +1,30 @@
 # Quiz 02 — IOU Contract
 
-> **Coming soon** — quiz not yet written.
-
 ## When to attempt
 
 Complete modules **09 Templates** through **13 Constraints** before attempting this quiz.
 
-## Scenario
+## Rules
 
-Design a full IOU (I-Owe-You) contract system:
+No hints. No bug comments. Just a specification and a set of assertions to satisfy.
 
-- An `Iou` template with `issuer`, `owner`, `amount`, and `currency`
-- A `Transfer` choice that proposes transfer to a new owner via a separate `IouTransferProposal` template
-- An `Accept` choice on `IouTransferProposal` that completes the transfer
-- A `Settle` choice that archives the IOU (only the owner can settle with the issuer)
-- `ensure` constraints preventing negative amounts or self-transfer
-- A multi-step Script test: issue → propose transfer → accept → settle
+## Specification
 
-No hints. Design the templates, choices, and constraints yourself.
+Open `Quiz02.daml`. The template skeletons are there but contain bugs. Fix them to satisfy the spec:
+
+**`Iou`** — fields: `issuer : Party`, `owner : Party`, `amount : Decimal`, `currency : Text`
+- `signatory issuer`, `observer owner`
+- `ensure` rejects non-positive amounts
+- `Transfer` choice: owner proposes a transfer to a `newOwner`; creates an `IouTransferProposal`
+- `Settle` choice: owner archives the IOU
+
+**`IouTransferProposal`** — fields: `iou : Iou`, `newOwner : Party`
+- `Accept` choice: `newOwner` accepts; creates a new `Iou` with ownership transferred
+
+**Script assertions** in `quiz02`:
+1. Bank issues a 100 USD IOU to Alice
+2. Creating a negative-amount IOU must fail
+3. Alice transfers to Bob via `Transfer` → `Accept`
+4. The transferred IOU's owner is Bob, issuer and amount unchanged
+5. Bob settles the IOU
+6. The original IOU is gone after the transfer

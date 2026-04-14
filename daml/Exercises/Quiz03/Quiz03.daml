@@ -1,0 +1,153 @@
+-- Quiz 03 — Token Swap with Interface
+--
+-- Build a decentralised token swap using interfaces.
+-- The interface and template skeletons are provided.
+-- The implementation contains bugs.
+-- Make every assertion in quiz03 pass.
+--
+-- There are no hints.
+-- SwapProposal must work via the Fungible interface only —
+-- it must not reference GoldToken or SilverToken directly.
+
+module Exercises.Quiz03.Quiz03 where
+
+import Daml.Script
+
+-- ── Interface ────────────────────────────────────────────────────────────────
+
+data FungibleView = FungibleView
+  with
+    owner  : Party
+    amount : Decimal
+  deriving (Eq, Show)
+
+interface Fungible where
+  viewtype FungibleView
+  getOwner  : Party
+  getAmount : Decimal
+
+  -- Transfer to a new owner; returns the new interface contract id.
+  choice Transfer : ContractId Fungible
+    with newOwner : Party
+    controller owner
+    where
+      owner : Party
+
+-- ── GoldToken ────────────────────────────────────────────────────────────────
+
+template GoldToken
+  with
+    issuer : Party
+    owner  : Party
+    amount : Decimal
+  where
+    signatory issuer
+    observer  owner
+
+    interface instance Fungible for GoldToken where
+      view      = FungibleView with owner, amount
+      getOwner  = issuer  -- wrong: should return owner
+      getAmount = amount
+      choice Transfer : ContractId Fungible
+        with newOwner : Party
+        controller owner
+        do
+          cid <- create this with owner = newOwner
+          return (toInterfaceContractId @Fungible cid)
+
+-- ── SilverToken ──────────────────────────────────────────────────────────────
+
+template SilverToken
+  with
+    issuer : Party
+    owner  : Party
+    amount : Decimal
+  where
+    signatory issuer
+    observer  owner
+
+    interface instance Fungible for SilverToken where
+      view      = FungibleView with owner, amount
+      getOwner  = owner
+      getAmount = amount
+      choice Transfer : ContractId Fungible
+        with newOwner : Party
+        controller owner
+        do
+          cid <- create this with owner = newOwner
+          return (toInterfaceContractId @Fungible cid)
+
+-- ── SwapProposal ─────────────────────────────────────────────────────────────
+
+-- proposer offers their token (goldCid) for acceptor's token (silverCid).
+template SwapProposal
+  with
+    proposer  : Party
+    goldCid   : ContractId Fungible
+    acceptor  : Party
+    silverCid : ContractId Fungible
+  where
+    signatory proposer
+    observer  acceptor
+
+    choice AcceptSwap : (ContractId Fungible, ContractId Fungible)
+      controller acceptor
+      do
+        g <- exercise goldCid   Transfer with newOwner = acceptor
+        s <- exercise silverCid Transfer with newOwner = acceptor  -- wrong: should go to proposer
+        return (g, s)
+
+-- ── Script ───────────────────────────────────────────────────────────────────
+
+quiz03 : Script ()
+quiz03 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  -- Mint tokens
+  gCid <- submit bank do
+            createCmd GoldToken with issuer = bank, owner = alice, amount = 10.0
+  sCid <- submit bank do
+            createCmd SilverToken with issuer = bank, owner = bob, amount = 50.0
+
+  -- Upcast to Fungible interface contract ids
+  let gIface = toInterfaceContractId @Fungible gCid
+  let sIface = toInterfaceContractId @Fungible sCid
+
+  -- Alice proposes the swap
+  prop <- submit alice do
+            createCmd SwapProposal with
+              proposer  = alice
+              goldCid   = gIface
+              acceptor  = bob
+              silverCid = sIface
+
+  -- Bob accepts
+  (newG, newS) <- submit bob do exerciseCmd prop AcceptSwap
+
+  -- Bob now owns the gold
+  gView <- queryInterfaceContractId @Fungible bob newG
+  case gView of
+    None   -> assertFail "gold token not found after swap"
+    Some v -> do
+      assertMsg "Bob now owns gold"     (v.owner  == bob)
+      assertMsg "gold amount unchanged" (v.amount == 10.0)
+
+  -- Alice now owns the silver
+  sView <- queryInterfaceContractId @Fungible alice newS
+  case sView of
+    None   -> assertFail "silver token not found after swap"
+    Some v -> do
+      assertMsg "Alice now owns silver"   (v.owner  == alice)
+      assertMsg "silver amount unchanged" (v.amount == 50.0)
+
+  -- Exercising on already-consumed contract ids must fail
+  prop2 <- submit alice do
+             createCmd SwapProposal with
+               proposer  = alice
+               goldCid   = gIface
+               acceptor  = bob
+               silverCid = sIface
+
+  submitMustFail bob do exerciseCmd prop2 AcceptSwap
