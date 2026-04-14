@@ -1,0 +1,70 @@
+-- ProposeAccept 2 — Proposal with Counter-offer
+--
+-- A receiver can propose a counter-offer instead of accepting directly.
+-- This creates a new Proposal with the roles swapped.
+--
+-- Fix the `CounterOffer` choice:
+--   1. Controller should be `receiver` not `proposer`.
+--   2. The new Proposal should swap the parties: `proposer = receiver, receiver = proposer`.
+--      Currently both are set to `proposer` — fix the second one to `proposer = proposer`
+--      wait, let me clarify:
+--        new Proposal { proposer = receiver, receiver = proposer, terms = newTerms }
+--      Bug: `receiver = proposer` is wrong in the new proposal — it should be `receiver = proposer`
+--      Actually bug is: `proposer = proposer` in the create — should be `proposer = receiver`.
+
+module Exercises.ProposeAccept.Ex2 where
+
+import Daml.Script
+
+template Proposal
+  with
+    proposer : Party
+    receiver : Party
+    terms    : Text
+  where
+    signatory proposer
+    observer  receiver
+
+    choice Accept : ContractId Deal
+      controller receiver
+      do
+        create Deal with partyA = proposer, partyB = receiver, terms
+
+    choice CounterOffer : ContractId Proposal
+      with newTerms : Text
+      controller proposer  -- BUG 1: should be receiver
+      do
+        create Proposal with
+          proposer = proposer   -- BUG 2: should be receiver
+          receiver = proposer
+          terms    = newTerms
+
+template Deal
+  with
+    partyA : Party
+    partyB : Party
+    terms  : Text
+  where
+    signatory [partyA, partyB]
+
+proposeaccept2 : Script ()
+proposeaccept2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  p1 <- submit alice do
+          createCmd Proposal with proposer = alice, receiver = bob, terms = "100 widgets for $500"
+
+  -- Bob counters
+  p2 <- submit bob do exerciseCmd p1 CounterOffer with newTerms = "100 widgets for $450"
+
+  -- Alice accepts Bob's counter
+  dealCid <- submit alice do exerciseCmd p2 Accept
+
+  deal <- queryContractId alice dealCid
+  case deal of
+    None   -> assertFail "deal not found"
+    Some d -> do
+      assertMsg "partyA is Bob"   (d.partyA == bob)
+      assertMsg "partyB is Alice" (d.partyB == alice)
+      assertMsg "terms updated"   (d.terms  == "100 widgets for $450")

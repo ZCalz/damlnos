@@ -1,0 +1,58 @@
+-- SOLUTION: ProposeAccept 2
+-- 1. controller proposer → controller receiver
+-- 2. proposer = proposer → proposer = receiver (in CounterOffer body)
+
+module Solutions.Exercises.ProposeAccept.Ex2 where
+
+import Daml.Script
+
+template Proposal
+  with
+    proposer : Party
+    receiver : Party
+    terms    : Text
+  where
+    signatory proposer
+    observer  receiver
+
+    choice Accept : ContractId Deal
+      controller receiver
+      do
+        create Deal with partyA = proposer, partyB = receiver, terms
+
+    choice CounterOffer : ContractId Proposal
+      with newTerms : Text
+      controller receiver
+      do
+        create Proposal with
+          proposer = receiver
+          receiver = proposer
+          terms    = newTerms
+
+template Deal
+  with
+    partyA : Party
+    partyB : Party
+    terms  : Text
+  where
+    signatory [partyA, partyB]
+
+proposeaccept2 : Script ()
+proposeaccept2 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  p1 <- submit alice do
+          createCmd Proposal with proposer = alice, receiver = bob, terms = "100 widgets for $500"
+
+  p2 <- submit bob do exerciseCmd p1 CounterOffer with newTerms = "100 widgets for $450"
+
+  dealCid <- submit alice do exerciseCmd p2 Accept
+
+  deal <- queryContractId alice dealCid
+  case deal of
+    None   -> assertFail "deal not found"
+    Some d -> do
+      assertMsg "partyA is Bob"   (d.partyA == bob)
+      assertMsg "partyB is Alice" (d.partyB == alice)
+      assertMsg "terms updated"   (d.terms  == "100 widgets for $450")

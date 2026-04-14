@@ -1,0 +1,39 @@
+-- SOLUTION: Interfaces 2
+-- "Hello from nobody" → "Hello from " <> name
+
+module Solutions.Exercises.Interfaces.Ex2 where
+
+import Daml.Script
+
+interface Greeter where
+  viewtype GreeterView
+  choice SayHello : Text
+    controller owner
+    where
+      owner : Party
+
+data GreeterView = GreeterView { owner : Party } deriving (Eq, Show)
+
+template Person
+  with
+    owner : Party
+    name  : Text
+  where
+    signatory owner
+
+    interface instance Greeter for Person where
+      view = GreeterView with owner
+      choice SayHello : Text
+        controller owner
+        do
+          return ("Hello from " <> name)
+
+interfaces2 : Script ()
+interfaces2 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd Person with owner = alice, name = "Alice"
+
+  let iCid = toInterfaceContractId @Greeter cid
+  msg <- submit alice do exerciseCmd iCid SayHello
+
+  assertMsg "greeting correct" (msg == "Hello from Alice")

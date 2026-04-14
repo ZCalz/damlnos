@@ -1,0 +1,45 @@
+-- Interfaces 2 — Interface Choices
+--
+-- Interfaces can declare choices that all implementing templates must support.
+-- The choice is exercised on an interface contract id.
+--
+-- Fix the `Greet` interface choice implementation in `Person`:
+--   1. The implementation returns `"Hello from nobody"` — it should return
+--      `"Hello from " <> name`.
+
+module Exercises.Interfaces.Ex2 where
+
+import Daml.Script
+
+interface Greeter where
+  viewtype GreeterView
+  choice SayHello : Text
+    controller owner
+    where
+      owner : Party
+
+data GreeterView = GreeterView { owner : Party } deriving (Eq, Show)
+
+template Person
+  with
+    owner : Party
+    name  : Text
+  where
+    signatory owner
+
+    interface instance Greeter for Person where
+      view = GreeterView with owner
+      choice SayHello : Text
+        controller owner
+        do
+          return "Hello from nobody"  -- BUG: should be "Hello from " <> name
+
+interfaces2 : Script ()
+interfaces2 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd Person with owner = alice, name = "Alice"
+
+  let iCid = toInterfaceContractId @Greeter cid
+  msg <- submit alice do exerciseCmd iCid SayHello
+
+  assertMsg "greeting correct" (msg == "Hello from Alice")

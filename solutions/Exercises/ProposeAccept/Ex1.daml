@@ -1,0 +1,57 @@
+-- SOLUTION: ProposeAccept 1
+-- 1. controller proposer → controller receiver
+-- 2. recipient = proposer → recipient = receiver
+
+module Solutions.Exercises.ProposeAccept.Ex1 where
+
+import Daml.Script
+
+template Proposal
+  with
+    proposer : Party
+    receiver : Party
+    terms    : Text
+  where
+    signatory proposer
+    observer  receiver
+
+    choice Accept : ContractId Agreement
+      controller receiver
+      do
+        create Agreement with
+          sender    = proposer
+          recipient = receiver
+          terms     = terms
+
+    choice Reject : ()
+      controller receiver
+      do pure ()
+
+template Agreement
+  with
+    sender    : Party
+    recipient : Party
+    terms     : Text
+  where
+    signatory [sender, recipient]
+
+proposeaccept1 : Script ()
+proposeaccept1 = script do
+  alice <- allocateParty "Alice"
+  bob   <- allocateParty "Bob"
+
+  propCid <- submit alice do
+               createCmd Proposal with
+                 proposer = alice
+                 receiver = bob
+                 terms    = "Alice delivers widget; Bob pays 100."
+
+  agrCid <- submit bob do exerciseCmd propCid Accept
+
+  agr <- queryContractId alice agrCid
+  case agr of
+    None   -> assertFail "agreement not found"
+    Some a -> do
+      assertMsg "sender is Alice"  (a.sender    == alice)
+      assertMsg "recipient is Bob" (a.recipient == bob)
+      assertMsg "terms preserved"  (a.terms     == "Alice delivers widget; Bob pays 100.")

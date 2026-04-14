@@ -1,0 +1,51 @@
+-- Interfaces 1 — Declaring and Implementing an Interface
+--
+-- An `interface` defines a set of methods any implementing template must provide.
+-- `interface instance` inside a template declares the implementation.
+--
+-- Fix the implementation:
+--   1. `getOwner` returns `issuer` — it should return `owner`.
+--   2. `getAmount` returns `0.0` — it should return `amount`.
+
+module Exercises.Interfaces.Ex1 where
+
+import Daml.Script
+
+interface Asset where
+  viewtype AssetView
+  getOwner  : Party
+  getAmount : Decimal
+
+data AssetView = AssetView
+  { owner  : Party
+  , amount : Decimal
+  } deriving (Eq, Show)
+
+template Token
+  with
+    issuer : Party
+    owner  : Party
+    amount : Decimal
+  where
+    signatory issuer
+    observer  owner
+
+    interface instance Asset for Token where
+      view = AssetView with owner, amount
+      getOwner  = issuer  -- BUG 1: should return owner
+      getAmount = 0.0     -- BUG 2: should return amount
+
+interfaces1 : Script ()
+interfaces1 = script do
+  bank  <- allocateParty "Bank"
+  alice <- allocateParty "Alice"
+
+  cid <- submit bank do createCmd Token with issuer = bank, owner = alice, amount = 42.0
+
+  let assetCid = toInterfaceContractId @Asset cid
+  tok <- queryContractId bank cid
+  case tok of
+    None   -> assertFail "token not found"
+    Some t -> do
+      assertMsg "owner is alice"  (getOwner  (toInterface @Asset t) == alice)
+      assertMsg "amount is 42"    (getAmount (toInterface @Asset t) == 42.0)

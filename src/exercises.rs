@@ -262,6 +262,184 @@ pub const EXERCISES: &[Exercise] = &[
         hint: "divideBy: `flip (/) d`. alwaysZero: `const 0`. countWhere: `length . filter p` (drop xs).",
         section: "08 · Functional101",
     },
+    // ── 09 Templates ────────────────────────────────────────────────────────
+    Exercise {
+        slug: "templates1",
+        name: "Templates 1 — Declaring a Template",
+        file: "daml/Exercises/Templates/Ex1.daml",
+        hint: "Add `text : Text` to the `with` block. Change `observer author` to `signatory author`.",
+        section: "09 · Templates",
+    },
+    Exercise {
+        slug: "templates2",
+        name: "Templates 2 — Signatory and Observer",
+        file: "daml/Exercises/Templates/Ex2.daml",
+        hint: "`signatory [issuer, owner]` (list both). `observer watcher` (not owner).",
+        section: "09 · Templates",
+    },
+    Exercise {
+        slug: "templates3",
+        name: "Templates 3 — ensure",
+        file: "daml/Exercises/Templates/Ex3.daml",
+        hint: "Replace `ensure True` with `ensure (amount > 0.0 && description /= \"\")`.",
+        section: "09 · Templates",
+    },
+    Exercise {
+        slug: "templates4",
+        name: "Templates 4 — Querying the Ledger",
+        file: "daml/Exercises/Templates/Ex4.daml",
+        hint: "\"Wrong text\" → \"Buy milk\". `length notes == 0` → `length notes == 1`.",
+        section: "09 · Templates",
+    },
+    // ── 10 Choices ──────────────────────────────────────────────────────────
+    Exercise {
+        slug: "choices1",
+        name: "Choices 1 — Consuming Choices",
+        file: "daml/Exercises/Choices/Ex1.daml",
+        hint: "Remove `nonconsuming`. Change controller to `owner`. Return `newOwner` not `owner`.",
+        section: "10 · Choices",
+    },
+    Exercise {
+        slug: "choices2",
+        name: "Choices 2 — Nonconsuming Choices",
+        file: "daml/Exercises/Choices/Ex2.daml",
+        hint: "Add `nonconsuming`. Return type `()` not `ContractId Counter`. Controller `anyone` not `owner`.",
+        section: "10 · Choices",
+    },
+    Exercise {
+        slug: "choices3",
+        name: "Choices 3 — Choice with Return Value",
+        file: "daml/Exercises/Choices/Ex3.daml",
+        hint: "Add `nonconsuming` to GetBalance. Return `balance` not `0.0`.",
+        section: "10 · Choices",
+    },
+    Exercise {
+        slug: "choices4",
+        name: "Choices 4 — Chaining Choices",
+        file: "daml/Exercises/Choices/Ex4.daml",
+        hint: "Remove `nonconsuming` from Split. Second create: `amount = rightAmount` not `amount`.",
+        section: "10 · Choices",
+    },
+    // ── 11 Scripts ──────────────────────────────────────────────────────────
+    Exercise {
+        slug: "scripts1",
+        name: "Scripts 1 — submit vs submitMustFail",
+        file: "daml/Exercises/Scripts/Ex1.daml",
+        hint: "Authorized create: `submit`. Unauthorized create: `submitMustFail`.",
+        section: "11 · Scripts",
+    },
+    Exercise {
+        slug: "scripts2",
+        name: "Scripts 2 — allocateParty and getTime",
+        file: "daml/Exercises/Scripts/Ex2.daml",
+        hint: "`pure alice` → `allocateParty \"Carol\"`. Time assertion: `/=` → `==`.",
+        section: "11 · Scripts",
+    },
+    Exercise {
+        slug: "scripts3",
+        name: "Scripts 3 — Multi-party Transactions",
+        file: "daml/Exercises/Scripts/Ex3.daml",
+        hint: "Add `alice` to the `submitMulti` signer list. Repay controlled by `borrower` (alice).",
+        section: "11 · Scripts",
+    },
+    // ── 12 Parties ──────────────────────────────────────────────────────────
+    Exercise {
+        slug: "parties1",
+        name: "Parties 1 — Visibility and Privacy",
+        file: "daml/Exercises/Parties/Ex1.daml",
+        hint: "Alice (signatory) sees it → `/= None`. Bob (non-stakeholder) cannot → `== None`.",
+        section: "12 · Parties",
+    },
+    Exercise {
+        slug: "parties2",
+        name: "Parties 2 — Adding an Observer",
+        file: "daml/Exercises/Parties/Ex2.daml",
+        hint: "`observer owner` → `observer reader` so Bob can see the contract.",
+        section: "12 · Parties",
+    },
+    Exercise {
+        slug: "parties3",
+        name: "Parties 3 — Divulgence via fetch",
+        file: "daml/Exercises/Parties/Ex3.daml",
+        hint: "`fetch otherCid` → `fetch secretCid`. Return `s` not `()`.",
+        section: "12 · Parties",
+    },
+    // ── 13 Constraints ──────────────────────────────────────────────────────
+    Exercise {
+        slug: "constraints1",
+        name: "Constraints 1 — assert inside a Choice",
+        file: "daml/Exercises/Constraints/Ex1.daml",
+        hint: "`amount <= 0.0` → `amount > 0.0` to allow positive withdrawals.",
+        section: "13 · Constraints",
+    },
+    Exercise {
+        slug: "constraints2",
+        name: "Constraints 2 — abortMsg",
+        file: "daml/Exercises/Constraints/Ex2.daml",
+        hint: "Guard: `status == \"Pending\"` → `status /= \"Pending\"`. New status: `\"Pending\"` → `\"Shipped\"`.",
+        section: "13 · Constraints",
+    },
+    // ── 14 Keys ─────────────────────────────────────────────────────────────
+    Exercise {
+        slug: "keys1",
+        name: "Keys 1 — Contract Keys",
+        file: "daml/Exercises/Keys/Ex1.daml",
+        hint: "`key owner : Party` → `key (owner, code) : (Party, Text)`. `maintainer key` → `maintainer key._1`.",
+        section: "14 · Keys",
+    },
+    Exercise {
+        slug: "keys2",
+        name: "Keys 2 — exerciseByKey",
+        file: "daml/Exercises/Keys/Ex2.daml",
+        hint: "Controller: `maintainer` → `owner`. Key arg: `\"Alice\"` → `(alice, \"Alice\")`.",
+        section: "14 · Keys",
+    },
+    // ── 15 ProposeAccept ────────────────────────────────────────────────────
+    Exercise {
+        slug: "pa1",
+        name: "ProposeAccept 1 — Propose-Accept Pattern",
+        file: "daml/Exercises/ProposeAccept/Ex1.daml",
+        hint: "Accept controller: `receiver` not `proposer`. Recipient field: `receiver` not `proposer`.",
+        section: "15 · ProposeAccept",
+    },
+    Exercise {
+        slug: "pa2",
+        name: "ProposeAccept 2 — Counter-offer",
+        file: "daml/Exercises/ProposeAccept/Ex2.daml",
+        hint: "CounterOffer controller: `receiver`. New proposal: `proposer = receiver, receiver = proposer`.",
+        section: "15 · ProposeAccept",
+    },
+    // ── 16 Compose ──────────────────────────────────────────────────────────
+    Exercise {
+        slug: "compose1",
+        name: "Compose 1 — Atomic Swap",
+        file: "daml/Exercises/Compose/Ex1.daml",
+        hint: "Second Transfer: `newOwner = owner1` not `owner2`.",
+        section: "16 · Compose",
+    },
+    // ── 17 Interfaces ───────────────────────────────────────────────────────
+    Exercise {
+        slug: "interfaces1",
+        name: "Interfaces 1 — Implementing an Interface",
+        file: "daml/Exercises/Interfaces/Ex1.daml",
+        hint: "`getOwner = owner` (not issuer). `getAmount = amount` (not 0.0).",
+        section: "17 · Interfaces",
+    },
+    Exercise {
+        slug: "interfaces2",
+        name: "Interfaces 2 — Interface Choices",
+        file: "daml/Exercises/Interfaces/Ex2.daml",
+        hint: "Return `\"Hello from \" <> name` instead of `\"Hello from nobody\"`.",
+        section: "17 · Interfaces",
+    },
+    // ── 18 Exceptions ───────────────────────────────────────────────────────
+    Exercise {
+        slug: "exceptions1",
+        name: "Exceptions 1 — throw and catch",
+        file: "daml/Exercises/Exceptions/Ex1.daml",
+        hint: "Add `deriving Show` to InsufficientFunds. Flip guard: `amount <= balance` → `amount > balance`.",
+        section: "18 · Exceptions",
+    },
 ];
 
 /// Look up an exercise by slug. Returns `None` if not found.

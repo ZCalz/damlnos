@@ -1,0 +1,43 @@
+-- SOLUTION: Exceptions 1
+-- 1. Add `deriving Show` to InsufficientFunds
+-- 2. amount <= balance → amount > balance
+
+module Solutions.Exercises.Exceptions.Ex1 where
+
+import Daml.Script
+import DA.Exception
+
+exception InsufficientFunds
+  with
+    requested : Decimal
+    available : Decimal
+  deriving Show
+
+template Wallet
+  with
+    owner   : Party
+    balance : Decimal
+  where
+    signatory owner
+
+    choice Withdraw : ContractId Wallet
+      with amount : Decimal
+      controller owner
+      do
+        when (amount > balance) $
+          throw InsufficientFunds with requested = amount, available = balance
+        create this with balance = balance - amount
+
+exceptions1 : Script ()
+exceptions1 = script do
+  alice <- allocateParty "Alice"
+  cid   <- submit alice do createCmd Wallet with owner = alice, balance = 100.0
+
+  cid2 <- submit alice do exerciseCmd cid Withdraw with amount = 30.0
+
+  submitMustFail alice do exerciseCmd cid2 Withdraw with amount = 999.0
+
+  bal <- queryContractId alice cid2
+  case bal of
+    None   -> assertFail "wallet not found"
+    Some w -> assertMsg "balance is 70" (w.balance == 70.0)
