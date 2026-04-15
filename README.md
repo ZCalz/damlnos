@@ -1,8 +1,8 @@
-# Damlers
+# Damlings
 
 > Learn DAML by fixing broken code.
 
-Damlers is a collection of small, hands-on exercises that teach the [DAML](https://www.digitalasset.com/developers) smart contract language from the ground up. Inspired by [Rustlings](https://github.com/rust-lang/rustlings), each exercise contains intentional errors or blanks that you fix to make the tests pass.
+Damlings is a collection of small, hands-on exercises that teach the [DAML](https://www.digitalasset.com/developers) smart contract language from the ground up. Inspired by [Rustlings](https://github.com/rust-lang/rustlings), each exercise contains intentional errors or blanks that you fix to make the tests pass.
 
 No prior DAML knowledge required. The exercises start from pure functional programming basics (DAML is built on Haskell) and build up to full contract workflows, multi-party authorization, and interface design.
 
@@ -11,7 +11,7 @@ No prior DAML knowledge required. The exercises start from pure functional progr
 ## Prerequisites
 
 - [DAML SDK](https://docs.daml.com/getting-started/installation.html) 3.4.x or later
-- [Rust](https://rustup.rs/) (to build the `damlers` CLI runner)
+- [Rust](https://rustup.rs/) (to build the `damlings` CLI runner)
 - A text editor or IDE with DAML support (VS Code + DAML extension recommended)
 
 ---
@@ -19,14 +19,14 @@ No prior DAML knowledge required. The exercises start from pure functional progr
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-org/damlers
-cd damlers
+git clone https://github.com/your-org/damlings
+cd damlings
 
 # Build the CLI runner
 cargo build --release
 
 # Start the watcher — it will guide you through exercises in order
-./target/release/damlers watch
+./target/release/damlings watch
 ```
 
 The watcher compiles and runs the current exercise's tests after every file save. When all tests pass, it advances to the next exercise automatically.
@@ -34,10 +34,10 @@ The watcher compiles and runs the current exercise's tests after every file save
 ### Other commands
 
 ```bash
-damlers list          # Show all exercises and your progress
-damlers hint          # Print a hint for the current exercise
-damlers run <name>    # Run a specific exercise (e.g. damlers run ex01_types1)
-damlers reset <name>  # Reset an exercise back to its original broken state
+damlings list          # Show all exercises and your progress
+damlings hint          # Print a hint for the current exercise
+damlings run <name>    # Run a specific exercise (e.g. damlings run ex01_types1)
+damlings reset <name>  # Reset an exercise back to its original broken state
 ```
 
 ---
@@ -61,7 +61,7 @@ daml/exercises/02_records/
   ex02_records3.daml  ← exercise 3: nested records
 ```
 
-Fix the `-- TODO` items in each `.daml` file until `damlers watch` shows all tests green.
+Fix the `-- TODO` items in each `.daml` file until `damlings watch` shows all tests green.
 
 ---
 
@@ -114,12 +114,12 @@ After every few modules there is a quiz exercise — a larger scenario with no h
 ## Project Layout
 
 ```
-Damlers/
+Damlings/
 ├── README.md                  ← you are here
 ├── daml.yaml                  ← single DAML project config (SDK 3.4.x)
 ├── Cargo.toml                 ← CLI runner (Rust)
 ├── src/
-│   └── main.rs                ← damlers CLI: watch, hint, list, run, reset
+│   └── main.rs                ← damlings CLI: watch, hint, list, run, reset
 ├── daml/
 │   └── exercises/
 │       ├── 00_intro/
@@ -138,7 +138,7 @@ Damlers/
 │           └── quiz_01.daml
 ├── solutions/
 │   └── exercises/             ← completed reference solutions (same layout)
-└── .damlers/
+└── .damlings/
     └── state.json             ← tracks your current exercise and progress
 ```
 
@@ -146,15 +146,15 @@ Damlers/
 
 ## How the CLI Runner Works
 
-The `damlers` binary is a small Rust program that:
+The `damlings` binary is a small Rust program that:
 
-1. Reads `.damlers/state.json` to find the current exercise
+1. Reads `.damlings/state.json` to find the current exercise
 2. Spawns `daml test --files daml/exercises/<current>/<file>.daml` as a subprocess
 3. Watches the exercise file for changes using `notify` (cross-platform file watcher)
 4. On each save, re-runs the test and parses the output:
    - **All scripts pass** → prints success, advances state, shows the next exercise
    - **Compile error or test failure** → prints the error with a friendly header
-5. `damlers hint` reads the `-- HINT:` comment block at the top of each exercise
+5. `damlings hint` reads the `-- HINT:` comment block at the top of each exercise
 
 No separate ledger process is needed — DAML Script tests run entirely in the DAML interpreter (`daml test`).
 

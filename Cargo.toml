@@ -1,11 +1,11 @@
 [package]
-name = "damlers"
+name = "damlings"
 version = "0.1.0"
 edition = "2021"
 description = "Learn DAML by fixing broken code — a Rustlings-inspired exercise runner"
 
 [[bin]]
-name = "damlers"
+name = "damlings"
 path = "src/main.rs"
 
 [dependencies]

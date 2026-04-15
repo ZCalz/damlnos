@@ -1,4 +1,4 @@
-# Contributing to Damlers
+# Contributing to Damlings
 
 ## Adding a new exercise
 
@@ -11,7 +11,7 @@
 ## Exercise file template
 
 ```daml
--- Copyright (c) 2026 Damlers Contributors
+-- Copyright (c) 2026 Damlings Contributors
 -- SPDX-License-Identifier: Apache-2.0
 
 -- Exercise: <Section> N — <Title>
@@ -39,7 +39,7 @@ import Daml.Script
 
 - **One concept per exercise.** Don't mix template syntax and pattern matching in the same file.
 - **Broken state must fail.** The file as committed must either fail to compile or fail its assertions.
-- **Hint is one line.** It goes in `src/exercises.rs` and is printed by `damlers hint`.
+- **Hint is one line.** It goes in `src/exercises.rs` and is printed by `damlings hint`.
 - **No spoilers in hints.** Point at the right DAML concept; don't give the exact fix.
 - **Assert the right things.** The test should only pass once the user actually understands the exercise — not just because they deleted the assert.
 
@@ -60,5 +60,5 @@ daml test    # runs every script in the project
 
 ```bash
 cargo build --release
-./target/release/damlers list
+./target/release/damlings list
 ```

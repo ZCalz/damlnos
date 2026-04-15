@@ -1,15 +1,15 @@
-/// A single Damlers exercise.
+/// A single Damlings exercise.
 #[derive(Debug, Clone)]
 pub struct Exercise {
     /// Short identifier used in CLI commands (e.g. "intro1").
     pub slug: &'static str,
-    /// Human-readable name shown in `damlers list`.
+    /// Human-readable name shown in `damlings list`.
     pub name: &'static str,
     /// Path to the exercise file, relative to the project root.
     pub file: &'static str,
-    /// One-line hint shown by `damlers hint`.
+    /// One-line hint shown by `damlings hint`.
     pub hint: &'static str,
-    /// Section label for grouping in `damlers list`.
+    /// Section label for grouping in `damlings list`.
     pub section: &'static str,
 }
 

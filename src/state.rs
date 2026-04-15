@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
-const STATE_PATH: &str = ".damlers/state.json";
+const STATE_PATH: &str = ".damlings/state.json";
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct State {
@@ -24,7 +24,7 @@ impl State {
     }
 
     pub fn save(&self) -> Result<()> {
-        fs::create_dir_all(".damlers")?;
+        fs::create_dir_all(".damlings")?;
         let json = serde_json::to_string_pretty(self)?;
         fs::write(STATE_PATH, json)
             .with_context(|| format!("Failed to write {STATE_PATH}"))

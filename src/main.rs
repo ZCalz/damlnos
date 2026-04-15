@@ -10,7 +10,7 @@ use std::process::Command;
 
 #[derive(Parser)]
 #[command(
-    name = "damlers",
+    name = "damlings",
     about = "Learn DAML by fixing broken code",
     version
 )]
@@ -27,7 +27,7 @@ enum Commands {
     List,
     /// Show a hint for the current exercise
     Hint,
-    /// Run a specific exercise by slug (e.g. `damlers run intro1`)
+    /// Run a specific exercise by slug (e.g. `damlings run intro1`)
     Run {
         /// Exercise slug, e.g. "intro1", "types3"
         slug: String,
@@ -71,7 +71,7 @@ fn cmd_hint() -> Result<()> {
 fn cmd_run(slug: &str) -> Result<()> {
     let ex = match exercises::find(slug) {
         Some(e) => e,
-        None => bail!("No exercise with slug '{slug}'. Run `damlers list` to see all slugs."),
+        None => bail!("No exercise with slug '{slug}'. Run `damlings list` to see all slugs."),
     };
 
     println!("Running: {}", ex.name);
@@ -86,7 +86,7 @@ fn cmd_run(slug: &str) -> Result<()> {
 fn cmd_reset(slug: &str) -> Result<()> {
     let ex = match exercises::find(slug) {
         Some(e) => e,
-        None => bail!("No exercise with slug '{slug}'. Run `damlers list` to see all slugs."),
+        None => bail!("No exercise with slug '{slug}'. Run `damlings list` to see all slugs."),
     };
 
     println!("Resetting '{}' to its original state…", ex.name);

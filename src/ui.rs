@@ -1,18 +1,18 @@
 use crate::{exercises::Exercise, runner::TestResult};
 use colored::Colorize;
 
-const DAMLERS_BANNER: &str = r#"
-  ____                    _
- |  _ \  __ _ _ __ ___  | | ___ _ __ ___
- | | | |/ _` | '_ ` _ \ | |/ _ \ '__/ __|
- | |_| | (_| | | | | | || |  __/ |  \__ \
- |____/ \__,_|_| |_| |_||_|\___|_|  |___/
+const DAMLINGS_BANNER: &str = r#"
+  ____                    _ _
+ |  _ \  __ _ _ __ ___  | (_) ___
+ | | | |/ _` | '_ ` _ \ | | |/ _ \
+ | |_| | (_| | | | | | || | |  __/
+ |____/ \__,_|_| |_| |_||_|_|\___|
 
  Learn DAML by fixing broken code.
 "#;
 
 pub fn print_banner() {
-    println!("{}", DAMLERS_BANNER.cyan().bold());
+    println!("{}", DAMLINGS_BANNER.cyan().bold());
 }
 
 pub fn print_exercise_banner(idx: usize, total: usize, ex: &Exercise) {
