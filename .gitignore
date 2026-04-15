@@ -1,5 +1,6 @@
 # DAML build artifacts
-.daml/
+/.daml
+/log
 
 # Rust build artifacts
 target/

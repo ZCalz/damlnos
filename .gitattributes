@@ -1,0 +1,14 @@
+# Tell GitHub Linguist how to classify project files.
+
+# DAML source files — classify as DAML (requires Linguist >= 7.x).
+# If GitHub doesn't recognise DAML yet, change to linguist-language=Haskell
+# (DAML is syntactically Haskell-based) so the files appear in the language bar.
+# *.daml linguist-language=DAML
+
+# This tells GitHub to highlight Daml files as if they were Haskell. It's not
+# perfect, but it's better than no syntax highlighting at all.
+*.daml linguist-language=Haskell
+
+# Cargo.lock is generated — exclude it from language stats so it doesn't
+# artificially inflate the Rust percentage.
+Cargo.lock linguist-generated=true
