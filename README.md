@@ -2,15 +2,20 @@
 
 > Learn DAML by fixing broken code.
 
-```bash
-      _______________________________
-     / \              \               \
-     \  \   •          \           •   \
-      \  \       •      \      •        \
-  __| | __    ___ ___ | |_ __   ___   ___  ___
- / _` |/ _` | '_ ` _ \| | '_ \ / _ \ / _ \/ __|
-| (_| | (_| | | | | | | | | | | (_) |  __/\__ \
- \__,_|\__,_|_| |_| |_|_|_| |_|\___/ \___||___/
+```
+               ___________     ___________
+              /\           \  /\           \
+             /  \___________\   \___________\
+            /   /           /   /           /
+           /   /   •   •   /   /   •   •   /
+          /   /     •     /   /           /
+         /\  /   •   •   /\  /     •     /
+        /  \/___________/  \/___________/
+   __| | __/  ___ ___  | | /_    ___   /__ 
+  / _` |/ _` | '_ ` _ \| | '_ \ / _ \ / __|
+ | (_| | (_| | | | | | | | | | | (_) |\__ \
+  \__,_|\__,_|_| |_| |_|_|_| |_|\___/ |___/
+     \/___________/  \/___________/
 
  ```
 
@@ -165,6 +170,15 @@ After every few modules there is a quiz exercise — a larger scenario with no h
 ## Project Layout
 
 ```
+      _______________________________
+     / \              \               \
+     \  \   •          \           •   \
+      \  \       •      \      •        \
+    __| | __    ___ ___ | |_ __   ___   ___
+   / _` |/ _` | '_ ` _ \| | '_ \ / _ \ / __|
+  | (_| | (_| | | | | | | | | | | (_) |\__ \
+   \__,_|\__,_|_| |_| |_|_|_| |_|\___/ |___/
+
 Damlnoes/
 ├── README.md                  ← you are here
 ├── daml.yaml                  ← single DAML project config (SDK 3.4.x)
@@ -219,5 +233,5 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add new
 
 ## License
 
-Apache 2.0
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full text and [NOTICE](NOTICE) for copyright attribution.
 

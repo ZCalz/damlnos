@@ -2,6 +2,7 @@
 name = "damlnoes"
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
 description = "Learn DAML by fixing broken code — a Rustlings-inspired exercise runner"
 
 [[bin]]
