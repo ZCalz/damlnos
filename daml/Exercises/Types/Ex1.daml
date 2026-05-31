@@ -1,4 +1,4 @@
--- Copyright (c) 2026 Damlnoes Contributors
+-- Copyright (c) 2026 Damlnos Contributors
 -- SPDX-License-Identifier: Apache-2.0
 
 -- Exercise: Types 1 — Primitive Literals
@@ -13,7 +13,7 @@
 --
 -- Type annotations are written after a colon:  name : Type = value
 -- DAML is strongly typed — assigning a value of the wrong type is a
--- compile error that the `damlnoes` watcher will show you immediately.
+-- compile error that the `damlnos` watcher will show you immediately.
 --
 -- DOCS ────────────────────────────────────────────────────────────────────────
 -- https://docs.daml.com/daml/intro/1_Token.html

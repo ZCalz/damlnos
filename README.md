@@ -1,4 +1,4 @@
-# Damlnoes
+# Damlnos
 
 > Learn DAML by fixing broken code.
 
@@ -19,7 +19,7 @@
 
  ```
 
-Damlnoes is a collection of small, hands-on exercises that teach the [DAML](https://www.digitalasset.com/developers) smart contract language from the ground up. Inspired by [Rustlings](https://github.com/rust-lang/rustlings), each exercise contains intentional errors or blanks that you fix to make the tests pass.
+Damlnos is a collection of small, hands-on exercises that teach the [DAML](https://www.digitalasset.com/developers) smart contract language from the ground up. Inspired by [Rustlings](https://github.com/rust-lang/rustlings), each exercise contains intentional errors or blanks that you fix to make the tests pass.
 
 No prior DAML knowledge required. The exercises start from pure functional programming basics (DAML is built on Haskell) and build up to full contract workflows, multi-party authorization, and interface design.
 
@@ -31,7 +31,7 @@ No prior DAML knowledge required. The exercises start from pure functional progr
 
 [DAML](https://www.digitalasset.com/developers) is a smart contract language for building multi-party applications on distributed ledgers. You define templates (contracts), choices (actions on those contracts), and scripts (tests) in DAML; the compiler packages them into DAR archives that run on [Canton](https://www.canton.network/).
 
-Damlnoes compiles and runs exercises using the DAML SDK, installed and managed by **dpm** (Daml Package Manager). Follow the official installation guide:
+Damlnos compiles and runs exercises using the DAML SDK, installed and managed by **dpm** (Daml Package Manager). Follow the official installation guide:
 
 **[Install dpm →](https://docs.canton.network/sdks-tools/cli-tools/dpm#installation)**
 
@@ -50,7 +50,7 @@ dpm version --active
 
 ### Other requirements
 
-- [Rust](https://rustup.rs/) — to build the `damlnoes` CLI watcher
+- [Rust](https://rustup.rs/) — to build the `damlnos` CLI watcher
 - A text editor with DAML support (VS Code + Daml Studio recommended; launch with `dpm studio`)
 
 ---
@@ -58,28 +58,28 @@ dpm version --active
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-org/damlnoes
-cd damlnoes
+git clone https://github.com/your-org/damlnos
+cd damlnos
 
 # Build the CLI runner
 cargo build --release
 
 # Start the watcher — it will guide you through exercises in order
-./target/release/damlnoes watch
+./target/release/damlnos watch
 ```
 
 The watcher compiles and runs the current exercise's tests after every file save. When all tests pass, it advances to the next exercise automatically.
 
 ### Shorter command
 
-If you prefer `damlnoes watch` over `./target/release/damlnoes watch`, install the binary once:
+If you prefer `damlnos watch` over `./target/release/damlnos watch`, install the binary once:
 
 ```bash
 cargo install --path .
-damlnoes watch
+damlnos watch
 ```
 
-This places `damlnoes` in `~/.cargo/bin`. If that directory is on your `PATH` (it usually is after installing Rust via rustup), you can use `damlnoes` from any directory.
+This places `damlnos` in `~/.cargo/bin`. If that directory is on your `PATH` (it usually is after installing Rust via rustup), you can use `damlnos` from any directory.
 
 Without installing, you can also run:
 
@@ -90,10 +90,10 @@ cargo run --release -- watch
 ### Other commands
 
 ```bash
-damlnoes list          # Show all exercises and your progress
-damlnoes hint          # Print a hint for the current exercise
-damlnoes run <name>    # Run a specific exercise (e.g. damlnoes run ex01_types1)
-damlnoes reset <name>  # Reset an exercise back to its original broken state
+damlnos list          # Show all exercises and your progress
+damlnos hint          # Print a hint for the current exercise
+damlnos run <name>    # Run a specific exercise (e.g. damlnos run ex01_types1)
+damlnos reset <name>  # Reset an exercise back to its original broken state
 ```
 
 ---
@@ -117,7 +117,7 @@ daml/exercises/02_records/
   ex02_records3.daml  ← exercise 3: nested records
 ```
 
-Fix the `-- TODO` items in each `.daml` file until `damlnoes watch` shows all tests green.
+Fix the `-- TODO` items in each `.daml` file until `damlnos watch` shows all tests green.
 
 ---
 
@@ -179,12 +179,12 @@ After every few modules there is a quiz exercise — a larger scenario with no h
   | (_| | (_| | | | | | | | | | | (_) |\__ \
    \__,_|\__,_|_| |_| |_|_|_| |_|\___/ |___/
 
-Damlnoes/
+Damlnos/
 ├── README.md                  ← you are here
 ├── daml.yaml                  ← single DAML project config (SDK 3.4.x)
 ├── Cargo.toml                 ← CLI runner (Rust)
 ├── src/
-│   └── main.rs                ← damlnoes CLI: watch, hint, list, run, reset
+│   └── main.rs                ← damlnos CLI: watch, hint, list, run, reset
 ├── daml/
 │   └── exercises/
 │       ├── 00_intro/
@@ -203,7 +203,7 @@ Damlnoes/
 │           └── quiz_01.daml
 ├── solutions/
 │   └── exercises/             ← completed reference solutions (same layout)
-└── .damlnoes/
+└── .damlnos/
     └── state.json             ← tracks your current exercise and progress
 ```
 
@@ -211,15 +211,15 @@ Damlnoes/
 
 ## How the CLI Runner Works
 
-The `damlnoes` binary is a small Rust program that:
+The `damlnos` binary is a small Rust program that:
 
-1. Reads `.damlnoes/state.json` to find the current exercise
+1. Reads `.damlnos/state.json` to find the current exercise
 2. Spawns `daml test --files daml/exercises/<current>/<file>.daml` as a subprocess
 3. Watches the exercise file for changes using `notify` (cross-platform file watcher)
 4. On each save, re-runs the test and parses the output:
    - **All scripts pass** → prints success, advances state, shows the next exercise
    - **Compile error or test failure** → prints the error with a friendly header
-5. `damlnoes hint` reads the `-- HINT:` comment block at the top of each exercise
+5. `damlnos hint` reads the `-- HINT:` comment block at the top of each exercise
 
 No separate ledger process is needed — DAML Script tests run entirely in the DAML interpreter (`daml test`).
 

@@ -1,4 +1,4 @@
--- Copyright (c) 2026 Damlers Contributors
+-- Copyright (c) 2026 Damlnos Contributors
 -- SPDX-License-Identifier: Apache-2.0
 
 -- Exercise: Intro 1 — Hello, DAML!
@@ -23,10 +23,10 @@ import Daml.Script
 
 intro1 : Script ()
 intro1 = script do
-  debug "Welcome to Damlers!"
+  debug "Welcome to Damlnos!"
   debug "You are learning DAML — a language for writing smart contracts."
   debug "Each exercise has one or more Script tests. Fix the code to make them pass."
-  debug "The damlers watcher re-runs the tests every time you save this file."
+  debug "The damlnos watcher re-runs the tests every time you save this file."
 
   -- TODO: Change False to True to mark this exercise as complete.
   assert False
