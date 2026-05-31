@@ -26,12 +26,14 @@ impl State {
     pub fn save(&self) -> Result<()> {
         fs::create_dir_all(".damlnos")?;
         let json = serde_json::to_string_pretty(self)?;
-        fs::write(STATE_PATH, json)
-            .with_context(|| format!("Failed to write {STATE_PATH}"))
+        fs::write(STATE_PATH, json).with_context(|| format!("Failed to write {STATE_PATH}"))
     }
 
     pub fn fresh() -> Self {
-        Self { current: 0, completed: vec![] }
+        Self {
+            current: 0,
+            completed: vec![],
+        }
     }
 
     /// Mark exercise at `idx` as complete and advance to the next one.

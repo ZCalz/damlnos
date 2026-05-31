@@ -31,10 +31,18 @@ pub fn print_banner() {
 pub fn print_exercise_banner(idx: usize, total: usize, ex: &Exercise) {
     let progress = format!("[{}/{}]", idx + 1, total);
     println!();
-    println!("{} {} — {}", progress.yellow().bold(), ex.section.dimmed(), ex.name.bold());
+    println!(
+        "{} {} — {}",
+        progress.yellow().bold(),
+        ex.section.dimmed(),
+        ex.name.bold()
+    );
     println!("{} {}", "File:".dimmed(), ex.file.cyan());
     println!();
-    println!("{}", "Watching for changes… (edit the file above, save to test)".dimmed());
+    println!(
+        "{}",
+        "Watching for changes… (edit the file above, save to test)".dimmed()
+    );
     println!();
 }
 
@@ -70,13 +78,20 @@ pub fn print_result(result: &TestResult) {
 }
 
 pub fn print_advance(ex: &Exercise, _prev_idx: usize) {
-    println!("{} {}", "".green().bold(), format!("'{}' complete!", ex.name).green());
+    println!(
+        "{} {}",
+        "".green().bold(),
+        format!("'{}' complete!", ex.name).green()
+    );
     println!();
 }
 
 pub fn print_congratulations() {
     println!();
-    println!("{}", "All exercises complete! Congratulations!".green().bold());
+    println!(
+        "{}",
+        "All exercises complete! Congratulations!".green().bold()
+    );
     println!();
     println!("You now know the fundamentals of DAML.");
     println!("Next steps:");

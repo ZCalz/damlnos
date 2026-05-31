@@ -79,8 +79,5 @@ pub fn run() -> Result<()> {
 }
 
 fn is_modify(ev: &Event) -> bool {
-    matches!(
-        ev.kind,
-        EventKind::Modify(_) | EventKind::Create(_)
-    )
+    matches!(ev.kind, EventKind::Modify(_) | EventKind::Create(_))
 }

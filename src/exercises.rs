@@ -445,7 +445,7 @@ pub const EXERCISES: &[Exercise] = &[
         slug: "interfaces2",
         name: "Interfaces 2 — Interface Choices",
         file: "daml/Exercises/Interfaces/Ex2.daml",
-        hint: "Return `\"Hello from \" <> name` instead of `\"Hello from nobody\"`.",
+        hint: "`getName = name` (not the literal \"nobody\"). The interface choice calls `getName`.",
         section: "17 · Interfaces",
     },
     // ── 18 Exceptions ───────────────────────────────────────────────────────

@@ -53,8 +53,16 @@ import Daml.Script
 ## Running all exercises
 
 ```bash
-daml test    # runs every script in the project
+dpm test    # runs every script in the project (expect failures — exercises are broken by design)
 ```
+
+CI validates reference solutions without touching the committed exercise files. The check copies the project to a temporary directory, overlays `solutions/Exercises/` there, and runs `dpm test` on each non-quiz file. Run the same check locally:
+
+```bash
+bash scripts/verify-solutions.sh
+```
+
+Your local `daml/Exercises/` files stay intentionally broken for learners.
 
 ## Building the CLI runner
 

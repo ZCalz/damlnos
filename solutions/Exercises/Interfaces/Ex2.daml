@@ -1,18 +1,20 @@
 -- SOLUTION: Interfaces 2
--- "Hello from nobody" → "Hello from " <> name
+-- getName = "nobody" → getName = name
 
 module Solutions.Exercises.Interfaces.Ex2 where
 
 import Daml.Script
 
+data GreeterView = GreeterView { owner : Party } deriving (Eq, Show)
+
 interface Greeter where
   viewtype GreeterView
-  choice SayHello : Text
-    controller owner
-    where
-      owner : Party
+  getName : Text
 
-data GreeterView = GreeterView { owner : Party } deriving (Eq, Show)
+  choice SayHello : Text
+    controller (view this).owner
+    do
+      pure ("Hello from " <> getName this)
 
 template Person
   with
@@ -23,10 +25,7 @@ template Person
 
     interface instance Greeter for Person where
       view = GreeterView with owner
-      choice SayHello : Text
-        controller owner
-        do
-          return ("Hello from " <> name)
+      getName = name
 
 interfaces2 : Script ()
 interfaces2 = script do

@@ -1,0 +1,56 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  fmt:
+    name: fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: rustfmt
+        run: cargo fmt --all --check
+
+  clippy:
+    name: clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+
+  rust:
+    name: rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: swatinem/rust-cache@v2
+      - name: cargo build
+        run: cargo build --release
+      - name: damlnos list
+        run: ./target/release/damlnos list
+
+  daml-solutions:
+    name: daml-solutions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install dpm
+        run: curl -fsSL https://get.digitalasset.com/install/install.sh | sh
+      - name: Add dpm to PATH
+        run: echo "$HOME/.dpm/bin" >> "$GITHUB_PATH"
+      - name: Install DAML SDK
+        run: dpm install package
+      - name: Verify solutions
+        run: bash scripts/verify-solutions.sh

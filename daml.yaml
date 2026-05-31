@@ -6,3 +6,5 @@ dependencies:
   - daml-stdlib
   - daml-script
 source: daml
+build-options:
+  - -Wno-upgrade-interfaces

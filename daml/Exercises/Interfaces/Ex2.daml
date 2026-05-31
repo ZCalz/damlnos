@@ -3,22 +3,23 @@
 -- Interfaces can declare choices that all implementing templates must support.
 -- The choice is exercised on an interface contract id.
 --
--- Fix the `Greet` interface choice implementation in `Person`:
---   1. The implementation returns `"Hello from nobody"` — it should return
---      `"Hello from " <> name`.
+-- Fix the `SayHello` interface choice implementation in `Person`:
+--   `getName` returns `"nobody"` — it should return `name`.
 
 module Exercises.Interfaces.Ex2 where
 
 import Daml.Script
 
+data GreeterView = GreeterView { owner : Party } deriving (Eq, Show)
+
 interface Greeter where
   viewtype GreeterView
-  choice SayHello : Text
-    controller owner
-    where
-      owner : Party
+  getName : Text
 
-data GreeterView = GreeterView { owner : Party } deriving (Eq, Show)
+  choice SayHello : Text
+    controller (view this).owner
+    do
+      pure ("Hello from " <> getName this)
 
 template Person
   with
@@ -29,10 +30,7 @@ template Person
 
     interface instance Greeter for Person where
       view = GreeterView with owner
-      choice SayHello : Text
-        controller owner
-        do
-          return "Hello from nobody"  -- BUG: should be "Hello from " <> name
+      getName = "nobody"  -- BUG: should be name
 
 interfaces2 : Script ()
 interfaces2 = script do

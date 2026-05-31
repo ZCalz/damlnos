@@ -9,11 +9,7 @@ use clap::{Parser, Subcommand};
 use std::process::Command;
 
 #[derive(Parser)]
-#[command(
-    name = "damlnos",
-    about = "Learn DAML by fixing broken code",
-    version
-)]
+#[command(name = "damlnos", about = "Learn DAML by fixing broken code", version)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -45,8 +41,8 @@ fn main() -> Result<()> {
 
     match cli.command.unwrap_or(Commands::Watch) {
         Commands::Watch => watcher::run(),
-        Commands::List  => cmd_list(),
-        Commands::Hint  => cmd_hint(),
+        Commands::List => cmd_list(),
+        Commands::Hint => cmd_hint(),
         Commands::Run { slug } => cmd_run(&slug),
         Commands::Reset { slug } => cmd_reset(&slug),
     }

@@ -34,5 +34,9 @@ pub fn run(file: &str) -> Result<TestResult> {
     // A file with no scripts at all is not a pass.
     let passed = !compile_error && !has_failure && has_ok;
 
-    Ok(TestResult { passed, output: combined, compile_error })
+    Ok(TestResult {
+        passed,
+        output: combined,
+        compile_error,
+    })
 }
