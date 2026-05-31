@@ -7,9 +7,9 @@ import Daml.Script
 
 intro1 : Script ()
 intro1 = script do
-  debug "Welcome to Damlers!"
+  debug "Welcome to Damlnoes!"
   debug "You are learning DAML — a language for writing smart contracts."
   debug "Each exercise has one or more Script tests. Fix the code to make them pass."
-  debug "The damlers watcher re-runs the tests every time you save this file."
+  debug "The damlnoes watcher re-runs the tests every time you save this file."
 
   assert True   -- fixed

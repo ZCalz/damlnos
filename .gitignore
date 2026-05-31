@@ -5,8 +5,8 @@
 # Rust build artifacts
 target/
 
-# Damlers runtime state
-.damlers/state.json
+# Damlnoes runtime state
+.damlnoes/state.json
 
 # Editor artifacts
 .idea/

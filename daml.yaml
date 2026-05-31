@@ -1,5 +1,5 @@
 sdk-version: 3.4.9
-name: damlings
+name: damlnoes
 version: 0.0.1
 dependencies:
   - daml-prim

@@ -1,6 +1,6 @@
 # 00 · Intro
 
-Welcome to Damlings! These two exercises get you up and running.
+Welcome to Damlnoes! These two exercises get you up and running.
 
 ## What is DAML?
 
@@ -8,7 +8,7 @@ DAML is a smart contract language built on top of Haskell. A DAML program define
 
 ## What is a Script?
 
-`Daml.Script` is DAML's built-in testing and simulation framework. A `Script` lets you simulate ledger operations — allocating parties, creating contracts, exercising choices — without needing a running ledger. All exercises in Damlings use `Daml.Script`.
+`Daml.Script` is DAML's built-in testing and simulation framework. A `Script` lets you simulate ledger operations — allocating parties, creating contracts, exercising choices — without needing a running ledger. All exercises in Damlnoes use `Daml.Script`.
 
 ## Exercises
 

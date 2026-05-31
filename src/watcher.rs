@@ -51,7 +51,7 @@ pub fn run() -> Result<()> {
                     }
                     last_run = Instant::now();
 
-                    // Re-load state in case the user ran `damlings reset` externally.
+                    // Re-load state in case the user ran `damlnoes reset` externally.
                     let mut st = State::load()?;
                     let ex = &exercises::EXERCISES[st.current];
 
