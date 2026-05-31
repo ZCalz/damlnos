@@ -22,5 +22,5 @@ types3 = script do
   let numText : Text = show 42   -- fixed: show converts Int to Text
   assertMsg "show 42 should produce \"42\"" (numText == "42")
 
-  let shout = T.toUpper greeting
-  assertMsg "toUpper should capitalise" (T.isPrefixOf "HELLO" shout)
+  let shout = T.asciiToUpper greeting
+  assertMsg "asciiToUpper should capitalise" (T.isPrefixOf "HELLO" shout)

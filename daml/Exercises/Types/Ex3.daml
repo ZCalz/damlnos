@@ -9,8 +9,8 @@
 --   (<>)        : Text -> Text -> Text   — concatenation (not `+`)
 --   show        : Show a => a -> Text    — convert any showable value to Text
 --   T.length    : Text -> Int            — number of characters
---   T.toLower   : Text -> Text           — lowercase
---   T.toUpper   : Text -> Text           — uppercase
+--   T.asciiToLower : Text -> Text        — lowercase ASCII letters
+--   T.asciiToUpper : Text -> Text        — uppercase ASCII letters
 --   T.isPrefixOf : Text -> Text -> Bool  — prefix check
 --
 -- Import DA.Text qualified as T to access the Text module functions.
@@ -47,5 +47,5 @@ types3 = script do
   assertMsg "show 42 should produce \"42\"" (numText == "42")
 
   -- This one is already correct — study it.
-  let shout = T.toUpper greeting
-  assertMsg "toUpper should capitalise" (T.isPrefixOf "HELLO" shout)
+  let shout = T.asciiToUpper greeting
+  assertMsg "asciiToUpper should capitalise" (T.isPrefixOf "HELLO" shout)
