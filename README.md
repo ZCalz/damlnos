@@ -2,6 +2,18 @@
 
 > Learn DAML by fixing broken code.
 
+```bash
+      _______________________________
+     / \              \               \
+     \  \   •          \           •   \
+      \  \       •      \      •        \
+  __| | __    ___ ___ | |_ __   ___   ___  ___
+ / _` |/ _` | '_ ` _ \| | '_ \ / _ \ / _ \/ __|
+| (_| | (_| | | | | | | | | | | (_) |  __/\__ \
+ \__,_|\__,_|_| |_| |_|_|_| |_|\___/ \___||___/
+
+ ```
+
 Damlnoes is a collection of small, hands-on exercises that teach the [DAML](https://www.digitalasset.com/developers) smart contract language from the ground up. Inspired by [Rustlings](https://github.com/rust-lang/rustlings), each exercise contains intentional errors or blanks that you fix to make the tests pass.
 
 No prior DAML knowledge required. The exercises start from pure functional programming basics (DAML is built on Haskell) and build up to full contract workflows, multi-party authorization, and interface design.
@@ -10,9 +22,31 @@ No prior DAML knowledge required. The exercises start from pure functional progr
 
 ## Prerequisites
 
-- [DAML SDK](https://docs.daml.com/getting-started/installation.html) 3.4.x or later
-- [Rust](https://rustup.rs/) (to build the `damlnoes` CLI runner)
-- A text editor or IDE with DAML support (VS Code + DAML extension recommended)
+### DAML
+
+[DAML](https://www.digitalasset.com/developers) is a smart contract language for building multi-party applications on distributed ledgers. You define templates (contracts), choices (actions on those contracts), and scripts (tests) in DAML; the compiler packages them into DAR archives that run on [Canton](https://www.canton.network/).
+
+Damlnoes compiles and runs exercises using the DAML SDK, installed and managed by **dpm** (Daml Package Manager). Follow the official installation guide:
+
+**[Install dpm →](https://docs.canton.network/sdks-tools/cli-tools/dpm#installation)**
+
+Once `dpm` is on your `PATH`, install the SDK version this project expects (see `daml.yaml`):
+
+```bash
+dpm install package
+```
+
+Verify the installation:
+
+```bash
+dpm --version
+dpm version --active
+```
+
+### Other requirements
+
+- [Rust](https://rustup.rs/) — to build the `damlnoes` CLI watcher
+- A text editor with DAML support (VS Code + Daml Studio recommended; launch with `dpm studio`)
 
 ---
 
@@ -186,3 +220,4 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add new
 ## License
 
 Apache 2.0
+
