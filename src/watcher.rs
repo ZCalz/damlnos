@@ -21,6 +21,7 @@ pub fn run() -> Result<()> {
         }
 
         let ex = &exercises::EXERCISES[st.current];
+        ui::clear_screen();
         ui::print_exercise_banner(st.current, total, ex);
 
         // Run the exercise once immediately on entry.
@@ -55,6 +56,8 @@ pub fn run() -> Result<()> {
                     let mut st = State::load()?;
                     let ex = &exercises::EXERCISES[st.current];
 
+                    ui::clear_screen();
+                    ui::print_exercise_banner(st.current, total, ex);
                     let result = runner::run(ex.file)?;
                     ui::print_result(&result);
 
