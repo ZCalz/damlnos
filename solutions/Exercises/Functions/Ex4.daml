@@ -6,6 +6,7 @@
 module Solutions.Exercises.Functions.Ex4 where
 
 import Daml.Script
+import DA.Math (sqrt)
 
 circleArea : Decimal -> Decimal
 circleArea r = pi * r * r
@@ -32,4 +33,4 @@ functions4 = script do
   assertMsg "cylinderVolume 1.0 1.0 ≈ 3.14159" (cylinderVolume 1.0 1.0 == 3.14159)
   assertMsg "cylinderVolume 0.0 5.0 = 0.0"      (cylinderVolume 0.0 5.0 == 0.0)
 
-  assertMsg "trianglePerimeter 3.0 4.0 = 12.0" (trianglePerimeter 3.0 4.0 == 12.0)
+  assertMsg "trianglePerimeter 3.0 4.0 = 12.0" (abs (trianglePerimeter 3.0 4.0 - 12.0) < 0.000000001)

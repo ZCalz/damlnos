@@ -9,7 +9,7 @@ import Daml.Script
 data OrderStatus
   = Pending
   | Processing Text
-  | Shipped    Text Text
+  | Shipped with carrier : Text; tracking : Text
   | Delivered
   | Cancelled  Text
     deriving (Eq, Show)
@@ -26,7 +26,7 @@ statusLabel : OrderStatus -> Text
 statusLabel status = case status of
   Pending         -> "Pending"
   Processing proc -> "Processing by " <> proc
-  Shipped c t     -> "Shipped via " <> c <> " (" <> t <> ")"
+  Shipped c t      -> "Shipped via " <> c <> " (" <> t <> ")"
   Delivered       -> "Delivered"
   Cancelled r     -> "Cancelled: " <> r
 
@@ -34,7 +34,7 @@ variants3 : Script ()
 variants3 = script do
   let p    = Pending
   let proc = Processing "warehouse-1"
-  let ship = Shipped "FedEx" "TRK123"
+  let ship = Shipped with carrier = "FedEx"; tracking = "TRK123"
   let del  = Delivered
   let can  = Cancelled "Customer request"
   assertMsg "Pending can't ship"   (canShip p    == False)

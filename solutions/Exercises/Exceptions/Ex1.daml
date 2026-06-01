@@ -1,17 +1,17 @@
 -- SOLUTION: Exceptions 1
--- 1. Add `deriving Show` to InsufficientFunds
+-- 1. Import `when` from DA.Action
 -- 2. amount <= balance → amount > balance
 
 module Solutions.Exercises.Exceptions.Ex1 where
 
 import Daml.Script
+import DA.Action (when)
 import DA.Exception
 
 exception InsufficientFunds
   with
     requested : Decimal
     available : Decimal
-  deriving Show
 
 template Wallet
   with

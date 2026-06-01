@@ -1,6 +1,6 @@
--- Constraints 2 — abortMsg
+-- Constraints 2 — abort
 --
--- `abortMsg "reason"` unconditionally fails a transaction with a message.
+-- `abort "reason"` unconditionally fails a transaction with a message.
 -- Combine it with `if` to create conditional failures.
 --
 -- Fix the `Ship` choice:
@@ -28,7 +28,7 @@ template Order
       controller seller
       do
         if status == "Pending"  -- BUG 1: should be /=
-          then abortMsg "Order is not in Pending state"
+          then abort "Order is not in Pending state"
           else create this with status = "Pending"  -- BUG 2: should be "Shipped"
 
 constraints2 : Script ()

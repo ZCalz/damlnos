@@ -26,6 +26,9 @@ module Exercises.Lists.Ex3 where
 
 import Daml.Script
 
+odd : Int -> Bool
+odd n = n % 2 /= 0
+
 lists3 : Script ()
 lists3 = script do
   let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : [Int]

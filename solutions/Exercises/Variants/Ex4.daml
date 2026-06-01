@@ -14,15 +14,15 @@ data Payment
 
 paymentAmount : Payment -> Decimal
 paymentAmount p = case p of
-  BankTransfer bt -> bt.amount
-  CardPayment  cp -> cp.amount
-  Cash         c  -> c.amount
+  BankTransfer _ amount -> amount
+  CardPayment  _ amount -> amount
+  Cash         amount   -> amount
 
 describe : Payment -> Text
 describe p = case p of
-  BankTransfer bt -> "Bank transfer to " <> bt.iban
-  CardPayment  cp -> "Card ending " <> cp.last4
-  Cash         _  -> "Cash payment"
+  BankTransfer iban _ -> "Bank transfer to " <> iban
+  CardPayment  last4 _ -> "Card ending " <> last4
+  Cash         _       -> "Cash payment"
 
 variants4 : Script ()
 variants4 = script do

@@ -1,10 +1,10 @@
 -- Exceptions 1 — throw and catch
 --
 -- DAML supports structured exceptions with `throw` and `try/catch`.
--- An exception type is declared with `exception` and must derive `Show`.
+-- In SDK 3.4, exception declarations no longer use `deriving Show` here.
 --
 -- Fix the code:
---   1. `exception InsufficientFunds` is missing `deriving Show` — add it.
+--   1. Import `when` from `DA.Action`.
 --   2. The guard throws when `amount <= balance` (i.e., when funds ARE sufficient).
 --      Flip to `amount > balance`.
 
@@ -12,12 +12,12 @@ module Exercises.Exceptions.Ex1 where
 
 import Daml.Script
 import DA.Exception
+-- BUG 1: import DA.Action (when)
 
 exception InsufficientFunds
   with
     requested : Decimal
     available : Decimal
-  -- BUG 1: missing `deriving Show`
 
 template Wallet
   with

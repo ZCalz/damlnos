@@ -1,6 +1,5 @@
 -- SOLUTION: Keys 1
--- 1. key owner : Party → key (owner, code) : (Party, Text)
--- 2. maintainer key → maintainer key._1
+-- SDK 3.4 target used by this project does not support contract keys.
 
 module Solutions.Exercises.Keys.Ex1 where
 
@@ -13,19 +12,17 @@ template Badge
     label : Text
   where
     signatory owner
-    key       (owner, code) : (Party, Text)
-    maintainer key._1
 
 keys1 : Script ()
 keys1 = script do
   alice <- allocateParty "Alice"
 
-  submit alice do
+  vipCid <- submit alice do
     createCmd Badge with owner = alice, code = "VIP", label = "Very Important Person"
   submit alice do
     createCmd Badge with owner = alice, code = "GOLD", label = "Gold Member"
 
-  res <- queryContractKey @Badge alice (alice, "VIP")
+  res <- queryContractId alice vipCid
   case res of
-    None      -> assertFail "VIP badge not found"
-    Some (_, b) -> assertMsg "label correct" (b.label == "Very Important Person")
+    None   -> assertFail "VIP badge not found"
+    Some b -> assertMsg "label correct" (b.label == "Very Important Person")

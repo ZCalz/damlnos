@@ -10,7 +10,7 @@
 --   data OrderStatus
 --     = Pending
 --     | Processing Text        -- processor ID
---     | Shipped    Text Text   -- carrier, tracking number
+--     | Shipped with carrier : Text; tracking : Text
 --     | Delivered
 --     | Cancelled  Text        -- cancellation reason
 --
@@ -32,7 +32,7 @@ import Daml.Script
 data OrderStatus
   = Pending
   | Processing Text
-  | Shipped    Text Text
+  | Shipped with carrier : Text; tracking : Text
   | Delivered
   | Cancelled  Text
     deriving (Eq, Show)
@@ -59,7 +59,7 @@ variants3 : Script ()
 variants3 = script do
   let p = Pending
   let proc = Processing "warehouse-1"
-  let ship = Shipped "FedEx" "TRK123"
+  let ship = Shipped with carrier = "FedEx"; tracking = "TRK123"
   let del  = Delivered
   let can  = Cancelled "Customer request"
 

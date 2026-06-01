@@ -1,14 +1,15 @@
--- Keys 2 — exerciseByKey
+-- Keys 2 — Exercising by Contract ID
 --
--- `exerciseByKey @T key ChoiceName with ...` exercises a choice
--- on a contract identified by key rather than contract id.
+-- SDK 3.4 target used by this project does not support contract keys.
+-- Use the `ContractId` returned by `createCmd`, then exercise that id with
+-- `exerciseCmd`.
 --
 -- Fix the `Rename` choice and the script:
---   1. The choice controller is `maintainer` — there is no field named `maintainer`.
+--   1. The choice controller is `username`, but controllers must be parties.
 --      Change the controller to `owner`.
---   2. The script calls `exerciseByKey @Registry alice "Alice" Rename with ...`
---      but the key type is `(Party, Text)` (owner, username pair).
---      Change the key argument to `(alice, "Alice")`.
+--   2. Bind the created registry contract id to `cid`.
+--   3. Exercise `cid` with `exerciseCmd`, bind the new contract id to `cid2`.
+--   4. Query `cid2` and assert that the username changed.
 
 module Exercises.Keys.Ex2 where
 
@@ -21,12 +22,10 @@ template Registry
     bio      : Text
   where
     signatory owner
-    key       (owner, username) : (Party, Text)
-    maintainer key._1
 
     choice Rename : ContractId Registry
       with newName : Text
-      controller maintainer  -- BUG 1: should be owner
+      controller username  -- BUG 1: should be owner
       do
         create this with username = newName
 
@@ -34,11 +33,11 @@ keys2 : Script ()
 keys2 = script do
   alice <- allocateParty "Alice"
 
-  submit alice do
+  submit alice do -- BUG 2: bind this contract id as `cid`
     createCmd Registry with owner = alice, username = "Alice", bio = "Hello!"
 
   submit alice do
-    exerciseByKey @Registry "Alice" Rename with newName = "AliceNew"  -- BUG 2: key should be (alice, "Alice")
+    exerciseCmd (error "TODO: use cid" : ContractId Registry) Rename with newName = "AliceNew" -- BUG 3: bind as `cid2`
 
-  res <- queryContractKey @Registry alice (alice, "AliceNew")
+  res <- queryContractId alice (error "TODO: use cid2" : ContractId Registry) -- BUG 4
   assertMsg "renamed" (res /= None)

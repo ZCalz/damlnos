@@ -28,6 +28,9 @@ module Exercises.Functional101.Ex1 where
 
 import Daml.Script
 
+even : Int -> Bool
+even n = n % 2 == 0
+
 -- TODO: Should add 1 first, then double the result.
 -- Currently doubles first, then adds 1. Swap the functions around `.`.
 addOneThenDouble : Int -> Int

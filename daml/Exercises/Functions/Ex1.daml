@@ -25,14 +25,14 @@
 module Exercises.Functions.Ex1 where
 
 import Daml.Script
+import DA.Math (sqrt)
 
 -- TODO: Fix the body — `square` should multiply x by itself, not add.
 square : Int -> Int
 square x = x + x
 
 -- TODO: Fix the body — `hypotenuse` should return sqrt(a² + b²).
--- Use `sqrt` from the Prelude (it works on Decimal).
--- You will need to convert Int args to Decimal with `intToDecimal`.
+-- Use `sqrt` from DA.Math (it works on Decimal).
 hypotenuse : Decimal -> Decimal -> Decimal
 hypotenuse a b = a + b
 
@@ -50,7 +50,7 @@ functions1 = script do
   assertMsg "square 5 = 25"        (square 5   == 25)
   assertMsg "square 0 = 0"         (square 0   == 0)
 
-  assertMsg "hypotenuse 3.0 4.0 = 5.0" (hypotenuse 3.0 4.0 == 5.0)
+  assertMsg "hypotenuse 3.0 4.0 = 5.0" (abs (hypotenuse 3.0 4.0 - 5.0) < 0.000000001)
 
   assertMsg "clamp 0 10 5 = 5"     (clamp 0 10 5    == 5)
   assertMsg "clamp 0 10 (-3) = 0"  (clamp 0 10 (-3) == 0)

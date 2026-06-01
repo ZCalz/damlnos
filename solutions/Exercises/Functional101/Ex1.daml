@@ -6,6 +6,9 @@ module Solutions.Exercises.Functional101.Ex1 where
 
 import Daml.Script
 
+even : Int -> Bool
+even n = n % 2 == 0
+
 addOneThenDouble : Int -> Int
 addOneThenDouble = (*2) . (+1)
 

@@ -148,7 +148,7 @@ DAML's expression language is based on Haskell. These exercises cover the buildi
 | 11 | `11_scripts` | 4 | `Daml.Script`, `allocateParty`, `submit`, `submitMustFail` |
 | 12 | `12_parties` | 4 | Multi-signatory contracts, `submitMulti`, authorization rules |
 | 13 | `13_constraints` | 3 | `ensure`, `assertMsg`, precondition failures |
-| 14 | `14_keys` | 4 | Contract keys, `fetchByKey`, `lookupByKey`, key maintenance |
+| 14 | `14_keys` | 4 | Tracking `ContractId`s, `queryContractId`, exercising known contracts |
 | 15 | `15_propose_accept` | 4 | Proposal/accept pattern, two-step workflows, `ContractId` chaining |
 | 16 | `16_compose` | 4 | Multi-contract workflows, delegation, role templates |
 | 17 | `17_interfaces` | 5 | `interface`, `requires`, `implements`, `toInterface`, dispatch |
@@ -234,4 +234,3 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add new
 ## License
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full text and [NOTICE](NOTICE) for copyright attribution.
-

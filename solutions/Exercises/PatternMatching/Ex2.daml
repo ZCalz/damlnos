@@ -14,7 +14,10 @@ colorName c = case c of
   Green -> "green"
   Blue  -> "blue"
 
-data Expr = Lit Int | Add Expr Expr | Neg Expr
+data Expr
+  = Lit Int
+  | Add with left : Expr; right : Expr
+  | Neg Expr
 
 eval : Expr -> Int
 eval e = case e of
@@ -28,6 +31,6 @@ patternMatching2 = script do
   assertMsg "Green is green" (colorName Green == "green")
   assertMsg "Blue is blue"   (colorName Blue  == "blue")
   assertMsg "Lit 5 = 5"           (eval (Lit 5)                    == 5)
-  assertMsg "Add 3 4 = 7"         (eval (Add (Lit 3) (Lit 4))      == 7)
+  assertMsg "Add 3 4 = 7"         (eval (Add with left = Lit 3; right = Lit 4) == 7)
   assertMsg "Neg 6 = -6"          (eval (Neg (Lit 6))              == -6)
-  assertMsg "Neg(Add 1 2) = -3"   (eval (Neg (Add (Lit 1) (Lit 2))) == -3)
+  assertMsg "Neg(Add 1 2) = -3"   (eval (Neg (Add with left = Lit 1; right = Lit 2)) == -3)

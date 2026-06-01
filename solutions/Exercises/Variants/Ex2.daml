@@ -7,7 +7,10 @@ module Solutions.Exercises.Variants.Ex2 where
 
 import Daml.Script
 
-data Shape = Circle Decimal | Rectangle Decimal Decimal | Triangle Decimal Decimal
+data Shape
+  = Circle Decimal
+  | Rectangle with width : Decimal; height : Decimal
+  | Triangle with base : Decimal; height : Decimal
   deriving (Eq, Show)
 
 area : Shape -> Decimal
@@ -25,8 +28,8 @@ perimeter s = case s of
 variants2 : Script ()
 variants2 = script do
   assertMsg "circle area r=1"       (area (Circle 1.0)         == 3.14159)
-  assertMsg "rectangle area 3x4"    (area (Rectangle 3.0 4.0)  == 12.0)
-  assertMsg "triangle area b=6 h=4" (area (Triangle 6.0 4.0)   == 12.0)
+  assertMsg "rectangle area 3x4"    (area (Rectangle with width = 3.0; height = 4.0) == 12.0)
+  assertMsg "triangle area b=6 h=4" (area (Triangle with base = 6.0; height = 4.0) == 12.0)
   assertMsg "circle perimeter"    (perimeter (Circle 1.0)        == Some 6.28318)
-  assertMsg "rectangle perimeter" (perimeter (Rectangle 3.0 4.0) == Some 14.0)
-  assertMsg "triangle perimeter"  (perimeter (Triangle 3.0 4.0)  == None)
+  assertMsg "rectangle perimeter" (perimeter (Rectangle with width = 3.0; height = 4.0) == Some 14.0)
+  assertMsg "triangle perimeter"  (perimeter (Triangle with base = 3.0; height = 4.0) == None)

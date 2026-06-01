@@ -32,6 +32,9 @@ module Exercises.Functional101.Ex3 where
 
 import Daml.Script
 
+even : Int -> Bool
+even n = n % 2 == 0
+
 -- TODO: `divideBy d x` should compute x / d (x divided by d).
 -- Fix: use `flip (/)` so the argument order is (dividend, divisor).
 divideBy : Decimal -> Decimal -> Decimal

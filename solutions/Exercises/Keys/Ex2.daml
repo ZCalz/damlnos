@@ -1,6 +1,5 @@
 -- SOLUTION: Keys 2
--- 1. controller maintainer → controller owner
--- 2. exerciseByKey @Registry "Alice" → exerciseByKey @Registry (alice, "Alice")
+-- SDK 3.4 target used by this project does not support contract keys.
 
 module Solutions.Exercises.Keys.Ex2 where
 
@@ -13,8 +12,6 @@ template Registry
     bio      : Text
   where
     signatory owner
-    key       (owner, username) : (Party, Text)
-    maintainer key._1
 
     choice Rename : ContractId Registry
       with newName : Text
@@ -26,11 +23,13 @@ keys2 : Script ()
 keys2 = script do
   alice <- allocateParty "Alice"
 
-  submit alice do
+  cid <- submit alice do
     createCmd Registry with owner = alice, username = "Alice", bio = "Hello!"
 
-  submit alice do
-    exerciseByKey @Registry (alice, "Alice") Rename with newName = "AliceNew"
+  cid2 <- submit alice do
+    exerciseCmd cid Rename with newName = "AliceNew"
 
-  res <- queryContractKey @Registry alice (alice, "AliceNew")
-  assertMsg "renamed" (res /= None)
+  res <- queryContractId alice cid2
+  case res of
+    None   -> assertFail "renamed registry not found"
+    Some r -> assertMsg "renamed" (r.username == "AliceNew")

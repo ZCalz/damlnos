@@ -7,6 +7,9 @@ module Solutions.Exercises.Functional101.Ex3 where
 
 import Daml.Script
 
+even : Int -> Bool
+even n = n % 2 == 0
+
 divideBy : Decimal -> Decimal -> Decimal
 divideBy d = flip (/) d
 

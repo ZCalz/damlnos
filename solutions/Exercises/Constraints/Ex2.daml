@@ -20,7 +20,7 @@ template Order
       controller seller
       do
         if status /= "Pending"
-          then abortMsg "Order is not in Pending state"
+          then abort "Order is not in Pending state"
           else create this with status = "Shipped"
 
 constraints2 : Script ()

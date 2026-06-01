@@ -11,8 +11,8 @@
 --     | CardPayment  with last4 : Text; amount : Decimal
 --     | Cash         with amount : Decimal
 --
--- Pattern matching binds the record fields positionally or you can access
--- them via the bound variable and dot syntax after matching.
+-- Pattern matching binds the constructor fields in order:
+--   BankTransfer iban amount -> ...
 --
 -- You can also nest variants inside records:
 --   data Invoice = Invoice with total : Decimal; payment : Payment
@@ -38,16 +38,16 @@ data Payment
 -- TODO: Each branch extracts the wrong field. Fix them to return `amount`.
 paymentAmount : Payment -> Decimal
 paymentAmount p = case p of
-  BankTransfer bt -> bt.iban      -- TODO: should be bt.amount (and bt.iban is Text)
-  CardPayment  cp -> cp.last4     -- TODO: should be cp.amount
-  Cash         c  -> c.amount     -- this one is correct
+  BankTransfer iban _amount -> iban      -- TODO: should return amount (and iban is Text)
+  CardPayment  last4 _amount -> last4    -- TODO: should return amount
+  Cash         amount        -> amount   -- this one is correct
 
 -- TODO: BankTransfer and CardPayment descriptions are swapped.
 describe : Payment -> Text
 describe p = case p of
-  BankTransfer bt -> "Card ending " <> bt.iban          -- TODO: swapped
-  CardPayment  cp -> "Bank transfer to " <> cp.last4    -- TODO: swapped
-  Cash         _  -> "Cash payment"
+  BankTransfer iban _   -> "Card ending " <> iban          -- TODO: swapped
+  CardPayment  last4 _  -> "Bank transfer to " <> last4    -- TODO: swapped
+  Cash         _        -> "Cash payment"
 
 variants4 : Script ()
 variants4 = script do

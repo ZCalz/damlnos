@@ -8,7 +8,7 @@
 --
 --   sortBy   : (a -> a -> Ordering) -> [a] -> [a]
 --   sort     : Ord a => [a] -> [a]
---   nub      : Eq a => [a] -> [a]      (remove duplicates, first wins)
+--   dedup    : Ord a => [a] -> [a]     (remove duplicates, first wins)
 --   zip      : [a] -> [b] -> [(a, b)]  (pair up elements)
 --   unzip    : [(a, b)] -> ([a], [b])  (split pairs)
 --   intercalate : [a] -> [[a]] -> [a]  (join with separator)
@@ -20,22 +20,23 @@
 -- https://docs.daml.com/daml/stdlib/DA-List.html
 --
 -- HINT ────────────────────────────────────────────────────────────────────────
--- 1. `nub` removes duplicates — the expected result is missing some elements.
+-- 1. `dedup` removes duplicates — the expected result is missing some elements.
 -- 2. `zip` pairs elements by position — the pairs are in the wrong order.
 -- 3. `intercalate` joins with a separator — fix the separator and list.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 module Exercises.Lists.Ex5 where
 
-import DA.List
 import Daml.Script
+import DA.List (dedup, sort)
+import DA.Text (intercalate)
 
 lists5 : Script ()
 lists5 = script do
-  -- TODO: nub removes duplicates keeping the first occurrence.
+  -- TODO: dedup removes duplicates keeping the first occurrence.
   -- Fix the expected result — it should have no duplicates.
-  let deduped = nub [1, 2, 1, 3, 2, 4] : [Int]
-  assertMsg "nub removes duplicates" (deduped == [1, 2, 1, 3, 4])
+  let deduped = dedup [1, 2, 1, 3, 2, 4] : [Int]
+  assertMsg "dedup removes duplicates" (deduped == [1, 2, 1, 3, 4])
 
   -- TODO: sort puts elements in ascending order. Fix the expected result.
   let sorted = sort [3, 1, 4, 1, 5, 9, 2, 6] : [Int]

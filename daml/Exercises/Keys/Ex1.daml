@@ -1,14 +1,14 @@
--- Keys 1 — Contract Keys
+-- Keys 1 — Tracking Contract IDs
 --
--- `key` gives a contract a stable, unique identifier on the ledger.
--- `maintainer` names the party responsible for key uniqueness.
--- `fetchByKey @T k` / `queryContractKey @T party k` look up by key.
+-- SDK 3.4 target used by this project does not support contract keys.
+-- Instead, scripts usually keep the `ContractId` returned by `createCmd`
+-- and later query or exercise that exact contract.
 --
--- Fix the template:
---   1. Change `key owner` to `key (owner, code)` so two badges with the same
---      owner but different codes are both allowed.
---   2. Change `maintainer key` to `maintainer key._1` because the key is now
---      a tuple and the maintainer must be a Party (first element of the tuple).
+-- Fix the script:
+--   1. Bind the result of creating the VIP badge to `vipCid`.
+--   2. Use `queryContractId alice vipCid` to fetch the VIP badge.
+--   3. Adjust the `Some` pattern because `queryContractId` returns the payload,
+--      not a `(ContractId, payload)` pair.
 
 module Exercises.Keys.Ex1 where
 
@@ -21,19 +21,17 @@ template Badge
     label : Text
   where
     signatory owner
-    key       owner         : Party          -- BUG 1: key (owner, code) : (Party, Text)
-    maintainer key                           -- BUG 2: maintainer key._1
 
 keys1 : Script ()
 keys1 = script do
   alice <- allocateParty "Alice"
 
-  submit alice do
+  submit alice do -- BUG 1: bind this contract id as `vipCid`
     createCmd Badge with owner = alice, code = "VIP", label = "Very Important Person"
   submit alice do
     createCmd Badge with owner = alice, code = "GOLD", label = "Gold Member"
 
-  res <- queryContractKey @Badge alice (alice, "VIP")
+  res <- queryContractId alice (error "TODO: use vipCid" : ContractId Badge) -- BUG 2
   case res of
     None      -> assertFail "VIP badge not found"
-    Some (_, b) -> assertMsg "label correct" (b.label == "Very Important Person")
+    Some (_, b) -> assertMsg "label correct" (b.label == "Very Important Person") -- BUG 3

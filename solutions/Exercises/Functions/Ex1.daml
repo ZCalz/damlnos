@@ -6,6 +6,7 @@
 module Solutions.Exercises.Functions.Ex1 where
 
 import Daml.Script
+import DA.Math (sqrt)
 
 square : Int -> Int
 square x = x * x   -- fixed
@@ -25,7 +26,7 @@ functions1 = script do
   assertMsg "square 5 = 25"         (square 5   == 25)
   assertMsg "square 0 = 0"          (square 0   == 0)
 
-  assertMsg "hypotenuse 3.0 4.0 = 5.0" (hypotenuse 3.0 4.0 == 5.0)
+  assertMsg "hypotenuse 3.0 4.0 = 5.0" (abs (hypotenuse 3.0 4.0 - 5.0) < 0.000000001)
 
   assertMsg "clamp 0 10 5 = 5"      (clamp 0 10 5    == 5)
   assertMsg "clamp 0 10 (-3) = 0"   (clamp 0 10 (-3) == 0)

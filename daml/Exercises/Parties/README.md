@@ -22,7 +22,6 @@ template Iou
 - Multi-signatory contracts — all signatories must agree
 - `submitMulti` — acting as multiple parties at once in tests
 - Divulgence — what observers can and cannot do
-- The `maintainer` keyword for contract keys
 - Common authorization errors and how to fix them
 
 ## Further Reading

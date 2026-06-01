@@ -6,6 +6,7 @@
 module Solutions.Exercises.Lists.Ex1 where
 
 import Daml.Script
+import DA.List (head, last)
 
 lists1 : Script ()
 lists1 = script do

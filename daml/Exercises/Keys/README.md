@@ -1,10 +1,12 @@
-# 14 · Keys
+# 14 · Contract IDs
 
 > **Coming soon** — exercises not yet written.
 
 ## Preview
 
-Contract keys give contracts a stable, business-meaningful identity beyond their `ContractId`.
+This SDK target does not support contract keys in this project, so these exercises
+focus on the most common workflow: keep the `ContractId` returned by `createCmd`
+and use it later with `queryContractId` or `exerciseCmd`.
 
 ```daml
 template Account
@@ -13,21 +15,20 @@ template Account
     accountNum : Text
   where
     signatory owner
-    key (owner, accountNum) : (Party, Text)
-    maintainer key._1
 
--- Look up by key instead of ContractId:
--- fetchByKey @Account (alice, "ACC-001")
+cid <- submit alice do
+  createCmd Account with owner = alice, accountNum = "ACC-001"
+
+res <- queryContractId alice cid
 ```
 
 ### What you will learn
 
-- Declaring `key` and `maintainer`
-- `fetchByKey` — fetch a contract by its key
-- `lookupByKey` — returns `Optional (ContractId t, t)`
-- `exerciseByKey` — exercise a choice without holding the `ContractId`
-- Key uniqueness: only one active contract per key
+- Capturing the `ContractId` returned by `createCmd`
+- `queryContractId` — fetch a contract by known id
+- `exerciseCmd` — exercise a choice on a known contract
+- Chaining workflows through newly-created contract ids
 
 ## Further Reading
 
-- [Contract keys](https://docs.daml.com/daml/reference/contract-keys.html)
+- [Templates and choices](https://docs.daml.com/daml/intro/3_Templates.html)
