@@ -201,8 +201,8 @@ Damlnos/
 │       └── quiz_01/
 │           ├── README.md
 │           └── quiz_01.daml
-├── solutions/
-│   └── exercises/             ← completed reference solutions (same layout)
+├── Solutions/
+│   └── Exercises/             ← completed reference solutions (same layout)
 └── .damlnos/
     └── state.json             ← tracks your current exercise and progress
 ```
